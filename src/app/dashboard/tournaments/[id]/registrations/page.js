@@ -1,0 +1,217 @@
+"use client";
+
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import Card from '@/components/ui/Card';
+import Button from '@/components/ui/Button';
+import DeleteConfirmationModal from '@/components/ui/DeleteConfirmationModal';
+import useRegistrationStore from '@/store/useRegistrationStore';
+import useAuthStore from '@/store/useAuthStore';
+
+export default function RegistrationsManagementPage() {
+    const params = useParams();
+    const { user } = useAuthStore();
+    const { 
+        registrations, 
+        getTournamentRegistrations, 
+        approveRegistration,
+        rejectRegistration,
+        markAsPaid,
+        isLoading 
+    } = useRegistrationStore();
+    
+    const [paymentNotes, setPaymentNotes] = useState({});
+    const [selectedReg, setSelectedReg] = useState(null);
+    const [rejectModal, setRejectModal] = useState({ isOpen: false, id: null, name: '' });
+
+    useEffect(() => {
+        if (params.id) {
+            getTournamentRegistrations(params.id);
+        }
+    }, [params.id, getTournamentRegistrations]);
+
+    const canManage = user?.role === 'owner' || user?.role === 'admin';
+
+    const handleApprove = async (regId) => {
+        try {
+            await approveRegistration(regId);
+            alert('Registration approved successfully!');
+        } catch (error) {
+            console.error('Error approving:', error);
+        }
+    };
+
+    const handleRejectClick = (reg) => {
+        setRejectModal({
+            isOpen: true,
+            id: reg._id,
+            name: reg.teamName
+        });
+    };
+
+    const confirmReject = async () => {
+        if (!rejectModal.id) return;
+        try {
+            await rejectRegistration(rejectModal.id);
+            setRejectModal({ isOpen: false, id: null, name: '' });
+            alert('Registration rejected.');
+        } catch (error) {
+            console.error('Error rejecting:', error);
+        }
+    };
+
+    const handleMarkPaid = async (regId) => {
+        try {
+            await markAsPaid(regId, paymentNotes[regId] || '');
+            alert('Registration marked as paid!');
+            setPaymentNotes({ ...paymentNotes, [regId]: '' });
+        } catch (error) {
+            console.error('Error marking as paid:', error);
+        }
+    };
+
+    const getStatusColor = (status) => {
+        switch (status) {
+            case 'approved': return 'bg-green-500/10 text-green-500 border-green-500/20';
+            case 'rejected': return 'bg-red-500/10 text-red-500 border-red-500/20';
+            default: return 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20';
+        }
+    };
+
+    const getPaymentStatusColor = (status) => {
+        switch (status) {
+            case 'completed': return 'bg-green-500/10 text-green-500 border-green-500/20';
+            case 'failed': return 'bg-red-500/10 text-red-500 border-red-500/20';
+            default: return 'bg-orange-500/10 text-orange-500 border-orange-500/20';
+        }
+    };
+
+    return (
+        <div className="space-y-6">
+            <div>
+                <h2 className="text-2xl font-bold text-white mb-2">Team Registrations</h2>
+                <p className="text-text-muted">Manage tournament registrations and payments</p>
+            </div>
+
+            {isLoading && <div className="text-white text-center py-10">Loading registrations...</div>}
+
+            {!isLoading && registrations.length === 0 && (
+                <Card className="p-8 text-center">
+                    <p className="text-text-muted">No registrations yet</p>
+                </Card>
+            )}
+            
+            <DeleteConfirmationModal
+                isOpen={rejectModal.isOpen}
+                onClose={() => setRejectModal({ ...rejectModal, isOpen: false })}
+                onConfirm={confirmReject}
+                itemName={rejectModal.name}
+                title="Reject Registration"
+                message={`Are you sure you want to reject the registration for "${rejectModal.name}"?`}
+                confirmText="Reject"
+            />
+
+            <div className="grid gap-4">
+                {registrations.map((reg) => (
+                    <Card key={reg._id} className="p-6">
+                        <div className="space-y-4">
+                            {/* Header */}
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <h3 className="text-xl font-bold text-white mb-1">{reg.teamName}</h3>
+                                    <p className="text-text-muted text-sm">
+                                        Registered by: {reg.user?.name || 'Unknown'} ({reg.user?.email})
+                                    </p>
+                                    <p className="text-text-muted text-sm">
+                                        {new Date(reg.registrationDate).toLocaleDateString()}
+                                    </p>
+                                </div>
+                                <div className="flex gap-2">
+                                    <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(reg.status)}`}>
+                                        {reg.status}
+                                    </span>
+                                    <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getPaymentStatusColor(reg.paymentStatus)}`}>
+                                        {reg.paymentStatus}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Team Members */}
+                            <div className="bg-surface-highlight p-4 rounded-lg">
+                                <h4 className="text-sm font-semibold text-white mb-2">Team Members</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                                    {reg.teamMembers?.map((member, idx) => (
+                                        <div key={idx} className="text-sm text-text-muted">
+                                            <span className="text-white">{member.name}</span>
+                                            {member.email && ` • ${member.email}`}
+                                            {member.phone && ` • ${member.phone}`}
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Payment Info */}
+                            <div className="flex justify-between items-center p-4 bg-surface-highlight rounded-lg">
+                                <div>
+                                    <p className="text-sm text-text-muted">Registration Fee</p>
+                                    <p className="text-2xl font-bold text-primary">₹{reg.paymentAmount}</p>
+                                    {reg.paymentMethod && (
+                                        <p className="text-xs text-text-muted mt-1">
+                                            Method: {reg.paymentMethod} 
+                                            {reg.paidBy && ` • Marked by ${reg.paidBy}`}
+                                        </p>
+                                    )}
+                                </div>
+                                {canManage && reg.paymentStatus === 'pending' && reg.status === 'approved' && (
+                                    <div className="flex gap-2 items-end flex-col">
+                                        <input
+                                            type="text"
+                                            placeholder="Payment notes (optional)"
+                                            value={paymentNotes[reg._id] || ''}
+                                            onChange={(e) => setPaymentNotes({ ...paymentNotes, [reg._id]: e.target.value })}
+                                            className="bg-surface border border-white/10 rounded px-3 py-1.5 text-white text-sm"
+                                        />
+                                        <Button size="sm" onClick={() => handleMarkPaid(reg._id)}>
+                                            Mark as Paid (Manual)
+                                        </Button>
+                                    </div>
+                                )}
+                                {reg.paymentStatus === 'completed' && (
+                                    <div className="text-right">
+                                        <p className="text-green-500 text-sm font-medium">✓ Payment Received</p>
+                                        {reg.paidAt && (
+                                            <p className="text-xs text-text-muted">
+                                                {new Date(reg.paidAt).toLocaleString()}
+                                            </p>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Notes */}
+                            {reg.notes && (
+                                <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded">
+                                    <p className="text-sm text-blue-400">
+                                        <strong>Notes:</strong> {reg.notes}
+                                    </p>
+                                </div>
+                            )}
+
+                            {/* Admin Actions */}
+                            {canManage && reg.status === 'pending' && (
+                                <div className="flex gap-2 pt-2 border-t border-white/5">
+                                    <Button size="sm" onClick={() => handleApprove(reg._id)}>
+                                        ✓ Approve
+                                    </Button>
+                                    <Button size="sm" variant="danger" onClick={() => handleRejectClick(reg)}>
+                                        ✕ Reject
+                                    </Button>
+                                </div>
+                            )}
+                        </div>
+                    </Card>
+                ))}
+            </div>
+        </div>
+    );
+}
