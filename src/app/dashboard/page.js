@@ -341,7 +341,7 @@ export default function DashboardPage() {
                         <Card className="p-8 text-center col-span-2">
                             <p className="text-text-muted mb-4">No tournaments yet</p>
                             <Link href="/dashboard/tournaments/create">
-                                <Button>Create Your First Tournament</Button>
+                                <Button>Create Your First Tournament</Button> 
                             </Link>
                         </Card>
                     )}
