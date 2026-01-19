@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://localhost:5000/api', // Pointing to local Express server
+    baseURL: '/api', // Relative path for Next.js API Routes
 });
 
 // Add Authorization header if token exists
