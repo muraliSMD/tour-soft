@@ -35,4 +35,4 @@ const tournamentSchema = mongoose.Schema({
     timestamps: true
 });
 
-module.exports = mongoose.model('Tournament', tournamentSchema);
+module.exports = mongoose.models.Tournament || mongoose.model('Tournament', tournamentSchema);

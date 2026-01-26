@@ -63,4 +63,4 @@ const registrationSchema = mongoose.Schema({
     timestamps: true
 });
 
-module.exports = mongoose.model('Registration', registrationSchema);
+module.exports = mongoose.models.Registration || mongoose.model('Registration', registrationSchema);
