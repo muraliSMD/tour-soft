@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 
 const MONGODB_URI = process.env.MONGO_URI;
 
-if (!MONGODB_URI) {
-  throw new Error("Please define the MONGO_URI environment variable inside .env");
-}
+
+// Validated inside connectDB to prevent build-time errors if env is missing
+const MONGODB_URI = process.env.MONGO_URI;
 
 let cached = global.mongoose;
 
@@ -13,6 +13,10 @@ if (!cached) {
 }
 
 async function connectDB() {
+  if (!MONGODB_URI) {
+    throw new Error("Please define the MONGO_URI environment variable inside .env");
+  }
+
   if (cached.conn) {
     return cached.conn;
   }
