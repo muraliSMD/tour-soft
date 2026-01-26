@@ -24,7 +24,7 @@ export default function SignupPage() {
 
   useEffect(() => {
     if (user || isSuccess) {
-        router.push('/dashboard/tournaments');
+        router.push('/dashboard');
     }
   }, [user, isSuccess, router]);
 

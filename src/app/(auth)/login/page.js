@@ -22,7 +22,7 @@ export default function LoginPage() {
   useEffect(() => {
       // If already logged in, redirect
       if (user || isSuccess) {
-          router.push('/dashboard/tournaments'); // Redirect to tournaments list
+          router.push('/dashboard'); // Redirect to tournaments list
       }
   }, [user, isSuccess, router]);
 
