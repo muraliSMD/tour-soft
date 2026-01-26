@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 
 
 // Validated inside connectDB to prevent build-time errors if env is missing
-const MONGODB_URI = process.env.MONGO_URI;
+const MONGODB_URI = process.env.MONGODB_URI;
 
 let cached = global.mongoose;
 
