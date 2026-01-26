@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const MONGODB_URI = process.env.MONGO_URI;
+
 
 
 // Validated inside connectDB to prevent build-time errors if env is missing
