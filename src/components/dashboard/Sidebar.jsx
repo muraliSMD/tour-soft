@@ -11,7 +11,6 @@ const Sidebar = ({ isOpen }) => {
 
     const handleLogout = () => {
         logout();
-        router.push('/login');
     };
 
     // Icons (keeping them defined inside for simplicity in this snippet)
