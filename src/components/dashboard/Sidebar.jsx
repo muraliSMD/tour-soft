@@ -48,8 +48,9 @@ const Sidebar = ({ isOpen }) => {
     return (
         <aside 
             className={`
-                fixed inset-y-0 left-0 bg-surface border-r border-white/5 z-40 hidden md:flex md:flex-col transition-all duration-300
-                ${isOpen ? 'w-64' : 'w-20'}
+                fixed inset-y-0 left-0 bg-surface border-r border-white/5 z-40 flex flex-col transition-transform duration-300 ease-in-out
+                ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+                ${isOpen ? 'w-64' : 'w-64 md:w-20'}
             `}
         >
             <div className={`flex items-center h-16 px-6 border-b border-white/5 ${isOpen ? 'justify-start' : 'justify-center'}`}>

@@ -6,6 +6,7 @@ import Card from '@/components/ui/Card';
 import api from '@/lib/axios';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
+import Breadcrumbs from '@/components/ui/Breadcrumbs';
 
 export default function TournamentDetailsPage() {
     const [tournaments, setTournaments] = useState([]);
@@ -36,6 +37,7 @@ export default function TournamentDetailsPage() {
         <div className="min-h-screen bg-background">
             <Navbar />
             <div className="pt-24 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+                <Breadcrumbs />
                 <div className="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
                     <div>
                         <h1 className="text-3xl font-bold text-white">Upcoming Tournaments</h1>

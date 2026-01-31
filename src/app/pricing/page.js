@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from '@/components/Navbar';
 import Button from '@/components/ui/Button';
 import Link from 'next/link';
+import Breadcrumbs from '@/components/ui/Breadcrumbs';
 
 export default function PricingPage() {
   const plans = [
@@ -56,6 +57,7 @@ export default function PricingPage() {
     <div className="min-h-screen bg-background">
       <Navbar />
       <div className="pt-24 pb-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <Breadcrumbs />
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary mb-4">
             Simple, Transparent Pricing
