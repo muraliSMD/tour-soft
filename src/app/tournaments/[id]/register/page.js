@@ -7,6 +7,7 @@ import api from '@/lib/axios';
 import useAuthStore from '@/store/useAuthStore';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
+import Breadcrumbs from '@/components/ui/Breadcrumbs';
 
 const TournamentRegistrationPage = () => {
     const params = useParams();
@@ -103,6 +104,7 @@ const TournamentRegistrationPage = () => {
     return (
         <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-md mx-auto">
+                <Breadcrumbs />
                 <div className="text-center mb-8">
                     <h1 className="text-3xl font-bold text-white mb-2">{tournament.title}</h1>
                     <p className="text-text-muted">Registration</p>

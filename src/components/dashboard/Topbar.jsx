@@ -38,7 +38,7 @@ const Topbar = ({ isSidebarOpen, toggleSidebar }) => {
     };
 
     return (
-        <header className={`fixed top-0 right-0 h-16 bg-background/80 backdrop-blur-md border-b border-white/5 z-30 flex items-center justify-between px-4 sm:px-6 lg:px-8 transition-all duration-300 ${isSidebarOpen ? 'left-64' : 'left-20'}`}>
+        <header className={`fixed top-0 right-0 h-16 bg-background/80 backdrop-blur-md border-b border-white/5 z-30 flex items-center justify-between px-4 sm:px-6 lg:px-8 transition-all duration-300 left-0 ${isSidebarOpen ? 'md:left-64' : 'md:left-20'}`}>
             <div className="flex items-center gap-4">
                  <Button size="sm" variant="ghost" className="md:hidden" onClick={toggleSidebar}>
                      <span className="sr-only">Toggle Sidebar</span>
