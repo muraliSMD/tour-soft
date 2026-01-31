@@ -61,11 +61,13 @@ const Breadcrumbs = ({ className = "" }) => {
     return (
         <nav aria-label="Breadcrumb" className={`text-sm text-text-muted mb-4 ${className}`}>
             <ol className="list-none p-0 inline-flex">
-                <li className="flex items-center">
-                    <Link href="/" className="hover:text-primary transition-colors">
-                        Home
-                    </Link>
-                </li>
+                {!pathname.startsWith('/dashboard') && (
+                    <li className="flex items-center">
+                        <Link href="/" className="hover:text-primary transition-colors">
+                            Home
+                        </Link>
+                    </li>
+                )}
                 {breadcrumbs.map((crumb, index) => (
                     <li key={crumb.href} className="flex items-center">
                         <svg className="fill-current w-3 h-3 mx-3" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
