@@ -14,6 +14,15 @@ const matchSchema = mongoose.Schema({
         type: Number,
         default: 1
     },
+    group: {
+        type: String,
+        default: null // e.g., "Group A", "Group B"
+    },
+    type: {
+        type: String,
+        enum: ['League', 'Knockout'],
+        default: 'Knockout'
+    },
     team1: {
         name: { type: String, required: true },
         score: { type: Number, default: 0 }

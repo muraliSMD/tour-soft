@@ -21,7 +21,7 @@ const useMatchStore = create((set) => ({
     },
 
     getTournamentMatches: async (tournamentId) => {
-        set({ isLoading: true, isError: false });
+        set({ isLoading: true, isError: false, matches: [] }); // Clear prev matches
         try {
             const response = await api.get(`/matches/tournament/${tournamentId}`);
             set({ matches: response.data, isLoading: false, isSuccess: true });
