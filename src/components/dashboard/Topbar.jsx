@@ -25,7 +25,6 @@ const Topbar = ({ isSidebarOpen, toggleSidebar }) => {
 
     const handleLogout = () => {
         logout();
-        router.push('/login');
     };
 
     // Get user initials from name

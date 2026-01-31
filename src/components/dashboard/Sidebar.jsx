@@ -11,7 +11,6 @@ const Sidebar = ({ isOpen }) => {
 
     const handleLogout = () => {
         logout();
-        router.push('/login');
     };
 
     // Icons (keeping them defined inside for simplicity in this snippet)
@@ -64,11 +63,13 @@ const Sidebar = ({ isOpen }) => {
 
             <div className="flex-1 flex flex-col pt-6 px-3 gap-2">
                 
-                {/* Dashboard / Overview - Visible to All Logged In Users */}
-                <Link href="/dashboard" className={`flex items-center gap-3 px-3 py-2 text-text-muted hover:text-white hover:bg-white/5 rounded-lg transition-colors ${!isOpen && 'justify-center'}`}>
-                    <GridIcon />
-                    {isOpen && <span className="font-medium whitespace-nowrap">Overview</span>}
-                </Link>
+                {/* Dashboard / Overview - Visible to Admin/Owner/Referee */}
+                {user && user.role !== 'player' && user.role !== 'user' && (
+                    <Link href="/dashboard" className={`flex items-center gap-3 px-3 py-2 text-text-muted hover:text-white hover:bg-white/5 rounded-lg transition-colors ${!isOpen && 'justify-center'}`}>
+                        <GridIcon />
+                        {isOpen && <span className="font-medium whitespace-nowrap">Overview</span>}
+                    </Link>
+                )}
 
                 {/* Owner/Admin Management Links */}
                 {user && (user.role === 'owner' || user.role === 'admin') && (
@@ -94,6 +95,19 @@ const Sidebar = ({ isOpen }) => {
                             {isOpen && <span className="font-medium whitespace-nowrap">Users</span>}
                         </Link>
                     </>
+                )}
+
+                {/* Player Specific Links */}
+                {(user?.role === 'user' || user?.role === 'player') && (
+                    <Link
+                        href="/dashboard/player"
+                        className={`flex items-center gap-3 px-3 py-2 text-text-muted hover:text-white hover:bg-white/5 rounded-lg transition-colors ${!isOpen && 'justify-center'}`}
+                    >
+                        <svg className="w-5 h-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                        {isOpen && <span className="font-medium whitespace-nowrap">My Tournaments</span>}
+                    </Link>
                 )}
             </div>
 

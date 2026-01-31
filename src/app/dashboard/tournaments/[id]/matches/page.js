@@ -35,7 +35,8 @@ export default function TournamentMatchesPage() {
                     const { default: api } = await import('@/lib/axios');
                     
                     // Fetch Registrations (Teams)
-                    const regResponse = await api.get(`/registrations/tournament/${params.id}`);
+                    // Fetch Registrations (Teams)
+                    const regResponse = await api.get(`/tournaments/${params.id}/registrations`);
                     // Extract unique team names or objects. Assuming registration has teamName.
                     // Filter out rejected ones if needed, or pending. 
                     // Let's assume accepted/approved registrations are valid teams.

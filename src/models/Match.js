@@ -60,4 +60,10 @@ const matchSchema = mongoose.Schema({
     timestamps: true
 });
 
-module.exports = mongoose.models.Match || mongoose.model('Match', matchSchema);
+// Force recompilation to ensure schema updates are picked up in dev
+if (mongoose.models.Match) {
+    delete mongoose.models.Match;
+}
+
+const Match = mongoose.model('Match', matchSchema);
+module.exports = Match;

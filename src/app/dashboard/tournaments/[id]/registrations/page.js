@@ -16,13 +16,15 @@ export default function RegistrationsManagementPage() {
         getTournamentRegistrations, 
         approveRegistration,
         rejectRegistration,
+        deleteRegistration,
         markAsPaid,
         isLoading 
     } = useRegistrationStore();
-    
+
     const [paymentNotes, setPaymentNotes] = useState({});
     const [selectedReg, setSelectedReg] = useState(null);
     const [rejectModal, setRejectModal] = useState({ isOpen: false, id: null, name: '' });
+    const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null, name: '' });
 
     useEffect(() => {
         if (params.id) {
@@ -64,7 +66,7 @@ export default function RegistrationsManagementPage() {
                  payload.teamMembers.push({ name: formData.player2, phone: formData.phone });
             }
 
-            await api.post(`/registrations/tournament/${params.id}/manual-register`, payload);
+            await api.post(`/tournaments/${params.id}/manual-register`, payload);
             
             setIsAddModalOpen(false);
             setFormData({ teamName: '', player1: '', player2: '', phone: '', city: '' });
@@ -104,6 +106,26 @@ export default function RegistrationsManagementPage() {
         }
     };
 
+    const handleDeleteClick = (reg) => {
+        setDeleteModal({
+            isOpen: true,
+            id: reg._id,
+            name: reg.teamName
+        });
+    };
+
+    const confirmDelete = async () => {
+        if (!deleteModal.id) return;
+        try {
+            await deleteRegistration(deleteModal.id);
+            setDeleteModal({ isOpen: false, id: null, name: '' });
+            alert('Team deleted successfully.');
+        } catch (error) {
+            console.error('Error deleting:', error);
+            alert('Failed to delete team.');
+        }
+    };
+
     const handleMarkPaid = async (regId) => {
         try {
             await markAsPaid(regId, paymentNotes[regId] || '');
@@ -138,6 +160,17 @@ export default function RegistrationsManagementPage() {
                     <p className="text-text-muted">Manage tournament teams and registrations</p>
                 </div>
                 <div className="flex gap-3">
+                    <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => {
+                            const url = `${window.location.origin}/register/${params.id}`;
+                            navigator.clipboard.writeText(url);
+                            alert("Registration link copied to clipboard: " + url);
+                        }}
+                    >
+                        Share Link
+                    </Button>
                     <Button variant="secondary" size="sm">Export CSV</Button>
                     {canManage && (
                         <Button size="sm" onClick={() => setIsAddModalOpen(true)}>+ Add Team</Button>
@@ -153,6 +186,7 @@ export default function RegistrationsManagementPage() {
                 </Card>
             )}
             
+            {/* Modal for Reject */}
             <DeleteConfirmationModal
                 isOpen={rejectModal.isOpen}
                 onClose={() => setRejectModal({ ...rejectModal, isOpen: false })}
@@ -161,6 +195,17 @@ export default function RegistrationsManagementPage() {
                 title="Reject Registration"
                 message={`Are you sure you want to reject the registration for "${rejectModal.name}"?`}
                 confirmText="Reject"
+            />
+            
+            {/* Modal for Delete */}
+            <DeleteConfirmationModal
+                isOpen={deleteModal.isOpen}
+                onClose={() => setDeleteModal({ ...deleteModal, isOpen: false })}
+                onConfirm={confirmDelete}
+                itemName={deleteModal.name}
+                title="Delete Team"
+                message={`Are you sure you want to PERMANENTLY delete the team "${deleteModal.name}"? This action cannot be undone.`}
+                confirmText="Delete Team"
             />
 
             {/* Add Team Modal */}
@@ -258,13 +303,26 @@ export default function RegistrationsManagementPage() {
                                         {new Date(reg.registrationDate).toLocaleDateString()}
                                     </p>
                                 </div>
-                                <div className="flex gap-2">
-                                    <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(reg.status)}`}>
-                                        {reg.status}
-                                    </span>
-                                    <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getPaymentStatusColor(reg.paymentStatus)}`}>
-                                        {reg.paymentStatus}
-                                    </span>
+                                <div className="flex flex-col items-end gap-2">
+                                    <div className="flex gap-2">
+                                        <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(reg.status)}`}>
+                                            {reg.status}
+                                        </span>
+                                        <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getPaymentStatusColor(reg.paymentStatus)}`}>
+                                            {reg.paymentStatus}
+                                        </span>
+                                    </div>
+                                    {canManage && (
+                                        <button 
+                                            onClick={() => handleDeleteClick(reg)}
+                                            className="text-text-muted hover:text-red-500 text-xs flex items-center gap-1 transition-colors mt-1"
+                                        >
+                                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                            Delete Team
+                                        </button>
+                                    )}
                                 </div>
                             </div>
 

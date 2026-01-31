@@ -69,14 +69,21 @@ export default function TournamentOverviewPage() {
                 </Card>
 
                  <Card className="p-6">
-                    <h3 className="font-semibold text-white mb-4">Share</h3>
+                    <h3 className="font-semibold text-white mb-4">Share Registration</h3>
                      <div className="flex gap-2">
                         <input 
                             readOnly 
-                            value={`https://torsoft.gg/t/${activeTournament._id}`}
+                            value={`${typeof window !== 'undefined' ? window.location.origin : ''}/register/${activeTournament._id}`}
                             className="bg-surface-highlight border border-white/10 rounded px-3 py-1.5 text-sm text-text-muted w-full focus:outline-none"
                         />
-                        <button className="bg-white/5 hover:bg-white/10 text-white p-2 rounded border border-white/10 transition-colors">
+                        <button 
+                            onClick={() => {
+                                const url = `${window.location.origin}/register/${activeTournament._id}`;
+                                navigator.clipboard.writeText(url);
+                                alert("Link copied!");
+                            }}
+                            className="bg-white/5 hover:bg-white/10 text-white p-2 rounded border border-white/10 transition-colors"
+                        >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                             </svg>

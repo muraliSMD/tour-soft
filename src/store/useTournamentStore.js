@@ -102,6 +102,24 @@ const useTournamentStore = create((set) => ({
         }
     },
 
+    resetTournament: async (id) => {
+        set({ isLoading: true, isError: false });
+        try {
+            const response = await api.post(`/tournaments/${id}/reset`);
+            set((state) => ({
+                activeTournament: { ...state.activeTournament, status: 'Draft' }, // Optimistic update
+                tournaments: state.tournaments.map(t => t._id === id ? { ...t, status: 'Draft' } : t),
+                isLoading: false,
+                isSuccess: true,
+                message: 'Tournament reset successfully'
+            }));
+        } catch (error) {
+             const message = error.response?.data?.message || error.message;
+             set({ isError: true, message, isLoading: false });
+             throw error;
+        }
+    },
+
     reset: () => {
         set({
             isError: false,

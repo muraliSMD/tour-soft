@@ -35,18 +35,125 @@ const MatchNode = ({ match }) => {
     );
 };
 
-const BracketViewer = ({ matches = [] }) => {
-    // Simple mock logic to group by rounds if 'round' field existed, 
-    // or just showing them in a flex wrap for now since current backend only generates Round 1
-    
-    // If we had round info:
-    // const rounds = matches.reduce ...
-    
-    // For now, let's just show the active matches in a list/grid
+const GroupStageViewer = ({ matches }) => {
+    // Group matches by "group" field (e.g., "Group A", "Group B")
+    const groups = matches.reduce((acc, match) => {
+        const groupName = match.group || 'Unknown Group';
+        if (!acc[groupName]) acc[groupName] = [];
+        acc[groupName].push(match);
+        return acc;
+    }, {});
+
+    // Sort groups alphabetically
+    const sortedGroupNames = Object.keys(groups).sort();
+
+    return (
+        <div className="space-y-12">
+            {sortedGroupNames.map(groupName => (
+                <div key={groupName} className="bg-surface p-6 rounded-xl border border-white/5 shadow-sm">
+                    <h3 className="text-xl font-bold text-white mb-6 border-b border-white/10 pb-2">{groupName}</h3>
+                    
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        {/* Standings Table */}
+                        <div>
+                            <h4 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-3">Standings</h4>
+                            <GroupStandings matches={groups[groupName]} />
+                        </div>
+
+                        {/* Match List */}
+                        <div>
+                            <h4 className="text-sm font-semibold text-text-muted uppercase tracking-wider mb-3">Matches</h4>
+                            <div className="flex flex-col gap-3">
+                                {groups[groupName].map(match => (
+                                    <MatchNode key={match._id} match={match} />
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+};
+
+// Helper to calculate and render standings
+const GroupStandings = ({ matches }) => {
+    const stats = {};
+
+    // Initialize logic
+    matches.forEach(match => {
+        // Ensure teams exist in stats
+        [match.team1, match.team2].forEach(team => {
+            if (!stats[team.name]) {
+                stats[team.name] = { name: team.name, played: 0, won: 0, lost: 0, points: 0 };
+            }
+        });
+
+        // Calculate stats if match is completed
+        if (match.status === 'completed' && match.winner) {
+            const winnerName = match.winner === 'team1' ? match.team1.name : match.team2.name;
+            const loserName = match.winner === 'team1' ? match.team2.name : match.team1.name;
+
+            // Winner stats
+            stats[winnerName].played += 1;
+            stats[winnerName].won += 1;
+            stats[winnerName].points += 2; // Assumption: 2 pts for win
+
+            // Loser stats
+            stats[loserName].played += 1;
+            stats[loserName].lost += 1;
+        }
+    });
+
+    const standings = Object.values(stats).sort((a, b) => b.points - a.points || b.won - a.won);
+
+    return (
+        <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+                <thead className="text-xs text-text-muted uppercase bg-white/5">
+                    <tr>
+                        <th className="px-3 py-2 rounded-tl-lg">Team</th>
+                        <th className="px-3 py-2 text-center">P</th>
+                        <th className="px-3 py-2 text-center">W</th>
+                        <th className="px-3 py-2 text-center">L</th>
+                        <th className="px-3 py-2 text-center rounded-tr-lg">Pts</th>
+                    </tr>
+                </thead>
+                <tbody className="divide-y divide-white/5">
+                    {standings.map((team, idx) => (
+                        <tr key={team.name} className={idx % 2 === 0 ? 'bg-white/0' : 'bg-white/[0.02]'}>
+                            <td className="px-3 py-2 font-medium text-white">{team.name}</td>
+                            <td className="px-3 py-2 text-center text-text-muted">{team.played}</td>
+                            <td className="px-3 py-2 text-center text-green-400">{team.won}</td>
+                            <td className="px-3 py-2 text-center text-red-400">{team.lost}</td>
+                            <td className="px-3 py-2 text-center font-bold text-primary">{team.points}</td>
+                        </tr>
+                    ))}
+                    {standings.length === 0 && (
+                        <tr><td colSpan="5" className="text-center p-4 text-text-muted">No participants yet</td></tr>
+                    )}
+                </tbody>
+            </table>
+        </div>
+    );
+};
+
+const BracketViewer = ({ matches = [], format }) => {
     if (!matches || matches.length === 0) {
         return <div className="text-text-muted text-center p-8">No matches generated yet.</div>;
     }
 
+    // Determine mode based on first match type OR Tournament Format
+    // Format string usually contains "League" or "Round Robin"
+    const isLeague = 
+        matches[0]?.type === 'League' || 
+        (format && (format.includes('League') || format.includes('Round Robin')));
+
+    if (isLeague) {
+        return <GroupStageViewer matches={matches} />;
+    }
+
+    // Default Knockout View
     return (
         <div className="overflow-x-auto pb-8">
             <div className="flex flex-wrap gap-8 justify-center">

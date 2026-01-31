@@ -22,14 +22,15 @@ export async function POST(req, { params }) {
             return NextResponse.json({ message: 'Tournament not found' }, { status: 404 });
         }
 
-        const registrations = await Registration.find({ tournament: id });
+        const registrations = await Registration.find({ tournament: id, status: 'approved' });
         
         if (registrations.length < 2) {
              return NextResponse.json({ message: 'Need at least 2 participants to start tournament' }, { status: 400 });
         }
 
         // Shuffle Participants
-        const participants = registrations.sort(() => Math.random() - 0.5);
+        // const participants = registrations.sort(() => Math.random() - 0.5);
+        const participants = registrations; // Keep sequential for testing/user logic
 
         // Clear existing matches
         await Match.deleteMany({ tournament: id });
@@ -39,35 +40,100 @@ export async function POST(req, { params }) {
         let matchNum = 1;
 
         // Check Tournament Format
-        if (tournament.format === 'League Tournament (Round Robin)') {
+        // Use loose check to handle variations
+        const isLeague = tournament.format && (tournament.format.includes('League') || tournament.format.includes('Round Robin'));
+        console.log(`Tournament Format detected: ${tournament.format}, Is League? ${isLeague}`);
+
+        if (isLeague) {
             // League Logic
-            const pools = ['Group A', 'Group B', 'Group C', 'Group D', 'Group E', 'Group F', 'Group G', 'Group H'];
+            // Determine Base Pool Size based on User Rules
+            // Rule 1: "if team is lessthan 11 then team count has to be 3"
+            // Rule 2: "if total team is morethan 12 then pool A has 4 team" -> implies base 4
+            // Rule 1: < 11 teams => Pool Size 3
+            // Rule 2: > 12 teams => Min 4 Pools, Max 6 teams per pool
             
-            // Logic: Teams are split into pools of 4. Remaining teams go to Pool A.
-            // Example: 12 teams -> 3 pools (A, B, C) of 4.
-            // Example: 16 teams -> 4 pools (A, B, C, D) of 4.
-            // Example: 13 teams -> 3 pools. A gets 5, B gets 4, C gets 4. wait, user said "add remaining team in it in pool A"
+            const totalTeams = participants.length;
+            let numPools = 1;
 
-             // Calculate base number of pools (assuming base size of 4)
-             let numPools = Math.floor(participants.length / 4);
-             if (numPools < 1) numPools = 1; // Minimum 1 pool
+            if (totalTeams < 11) {
+                // Example: 9 teams / 3 = 3 Pools
+                // Example: 8 teams / 3 = 3 Pools (3,3,2)
+                numPools = Math.ceil(totalTeams / 3);
+            } else if (totalTeams <= 12) {
+                // 11 or 12 teams. Base size 4.
+                // 11/4 = 3 pools (4,4,3) - WAIT. 3 pools is < 4 pools rule for larger? 
+                // Let's stick to base size 4 for this range.
+                // 11/4 = 3 pools.
+                // 12/4 = 3 pools.
+                numPools = Math.ceil(totalTeams / 4);
+            } else {
+                // > 12 teams.
+                // "Need to create 4 pools... max of one pool has 6 teams"
+                // Implies: Try 4 pools. If size > 6, increase pools.
+                // Formula: Max(4, Ceil(Total / 6))
+                
+                // Ex: 13 teams. Max(4, Ceil(2.1)) = 4 pools. (Teams: 4,3,3,3) OK.
+                // Ex: 25 teams. Max(4, Ceil(4.1)) = 5 pools. (Teams: 5,5,5,5,5) OK.
+                numPools = Math.max(4, Math.ceil(totalTeams / 6));
+            }
+            
+            if (numPools < 1) numPools = 1;
 
-             const poolBuckets = Array.from({ length: numPools }, () => []);
+            const poolBuckets = Array.from({ length: numPools }, () => []);
 
-             // Distribute first (numPools * 4) teams evenly
-             let pIndex = 0;
-             for (let i = 0; i < numPools; i++) {
-                 for (let j = 0; j < 4; j++) {
-                     if (pIndex < participants.length) {
-                         poolBuckets[i].push(participants[pIndex++]);
-                     }
-                 }
-             }
+            // Distribute teams into pools (Sequential / Chunking)
+            // User requirement: Teams 1-3 -> Pool A, Teams 4-6 -> Pool B
+            
+            // Calculate ideal size per pool (integer division)
+            // We know numPools. We just fill buckets sequentially.
+            // Actually, simple iteration is safest.
+            
+            // let currentPool = 0;
+            // participants.forEach...
+            
+            // Better: Dynamic chunking to handle remainders evenly?
+            // User's example: 9 teams, 3 pools -> 3 per pool.
+            // 8 teams, 3 pools -> 3, 3, 2.
+            
+            // Current approach (Round Robin distribution) gave 1,4,7.
+            // New approach (Sequential):
+            
+            /* 
+              Pool 0: Indices 0, 1, 2
+              Pool 1: Indices 3, 4, 5
+              Pool 2: Indices 6, 7, 8
+            */
 
-             // Put remaining teams into Pool A (index 0)
-             while (pIndex < participants.length) {
-                 poolBuckets[0].push(participants[pIndex++]);
-             }
+             participants.forEach((participant, index) => {
+                // Determine pool index based on "Rank" (index)
+                 // A simple way is Math.floor(index / (total / numPools)) ? No, that handles float poorly.
+                 
+                 // Let's fill pools one by one.
+                 // We need to know capacity of each pool.
+                 // Or just distribute evenly. 
+                 
+                 const poolIndex = Math.floor(index / (participants.length / numPools));
+                 // Edge case: if last element pushes bound? 
+                 // e.g. 9 / 3 = 3. 
+                 // idx 0,1,2 -> 0/3=0. 2/3=0.6 -> 0. OK.
+                 // idx 3,4,5 -> 3/3=1. 5/3=1.6 -> 1. OK.
+                 // idx 8 -> 8/3=2.6 -> 2. OK.
+                 
+                 // Check index 8/3 = 2.66. Pool 2.
+                 // What if 10 teams, 3 pools (3,3,4)? 
+                 // 10/3 = 3.33
+                 // idx 0-3 (4 items): 0..3 / 3.33 -> 0. (Pool 0 gets 4)
+                 // idx 4-6 (3 items): 4/3.33=1.2, 6/3.33=1.8 -> 1. (Pool 1 gets 3)
+                 // idx 7-9 (3 items): 7/3.33=2.1 -> 2. (Pool 2 gets 3)
+                 // Result: 4, 3, 3. OK.
+                 
+                 // Safety clamp
+                 const safePoolIndex = Math.min(poolIndex, numPools - 1);
+                 
+                 poolBuckets[safePoolIndex].push(participant);
+            });
+
+            const pools = ['Group A', 'Group B', 'Group C', 'Group D', 'Group E', 'Group F', 'Group G', 'Group H'];
 
              // Generate Round Robin Matches for each Pool
              poolBuckets.forEach((poolParticipants, poolIndex) => {

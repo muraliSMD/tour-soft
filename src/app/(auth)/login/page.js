@@ -12,6 +12,20 @@ export default function LoginPage() {
   const router = useRouter();
   const { login, isLoading, isError, isSuccess, message, user } = useAuthStore();
   
+  // Get redirect URL from query params
+  const [redirectUrl, setRedirectUrl] = useState('/dashboard');
+
+  useEffect(() => {
+      // Client-side only
+      if (typeof window !== 'undefined') {
+          const params = new URLSearchParams(window.location.search);
+          const redirect = params.get('redirect');
+          if (redirect) {
+              setRedirectUrl(redirect);
+          }
+      }
+  }, []);
+  
   const [formData, setFormData] = useState({
       email: '',
       password: ''
@@ -22,9 +36,9 @@ export default function LoginPage() {
   useEffect(() => {
       // If already logged in, redirect
       if (user || isSuccess) {
-          router.push('/dashboard'); // Redirect to tournaments list
+          router.push(redirectUrl); 
       }
-  }, [user, isSuccess, router]);
+  }, [user, isSuccess, router, redirectUrl]);
 
   const onChange = (e) => {
       setFormData((prevState) => ({
