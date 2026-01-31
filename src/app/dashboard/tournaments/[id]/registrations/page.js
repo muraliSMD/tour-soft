@@ -30,7 +30,51 @@ export default function RegistrationsManagementPage() {
         }
     }, [params.id, getTournamentRegistrations]);
 
+    // Modal State
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [formData, setFormData] = useState({
+        teamName: '',
+        player1: '',
+        player2: '',
+        phone: '',
+        city: ''
+    });
+
     const canManage = user?.role === 'owner' || user?.role === 'admin';
+
+    // Manual Registration Handler
+    const handleAddTeam = async (e) => {
+        e.preventDefault();
+        try {
+            // Need api instance. Since it's not imported at top of file like in participants page, we might need to import it or use a store action if available.
+            // checking imports... 'api' is not imported. I should import it or use store.
+            // store actions often wrap api. useRegistrationStore might not have manualRegister.
+            // I'll import api at the top.
+            const { default: api } = await import('@/lib/axios');
+            
+            const payload = {
+                teamName: formData.teamName,
+                teamMembers: [
+                    { name: formData.player1, phone: formData.phone }
+                ],
+                city: formData.city
+            };
+            
+            if (formData.player2) {
+                 payload.teamMembers.push({ name: formData.player2, phone: formData.phone });
+            }
+
+            await api.post(`/registrations/tournament/${params.id}/manual-register`, payload);
+            
+            setIsAddModalOpen(false);
+            setFormData({ teamName: '', player1: '', player2: '', phone: '', city: '' });
+            getTournamentRegistrations(params.id); // Refresh
+            alert("Team added successfully!");
+        } catch (error) {
+            console.error(error);
+            alert("Failed to add team");
+        }
+    };
 
     const handleApprove = async (regId) => {
         try {
@@ -88,9 +132,17 @@ export default function RegistrationsManagementPage() {
 
     return (
         <div className="space-y-6">
-            <div>
-                <h2 className="text-2xl font-bold text-white mb-2">Team Registrations</h2>
-                <p className="text-text-muted">Manage tournament registrations and payments</p>
+            <div className="flex justify-between items-center">
+                <div>
+                    <h2 className="text-2xl font-bold text-white mb-2">Teams</h2>
+                    <p className="text-text-muted">Manage tournament teams and registrations</p>
+                </div>
+                <div className="flex gap-3">
+                    <Button variant="secondary" size="sm">Export CSV</Button>
+                    {canManage && (
+                        <Button size="sm" onClick={() => setIsAddModalOpen(true)}>+ Add Team</Button>
+                    )}
+                </div>
             </div>
 
             {isLoading && <div className="text-white text-center py-10">Loading registrations...</div>}
@@ -110,6 +162,86 @@ export default function RegistrationsManagementPage() {
                 message={`Are you sure you want to reject the registration for "${rejectModal.name}"?`}
                 confirmText="Reject"
             />
+
+            {/* Add Team Modal */}
+            {isAddModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <Card className="w-full max-w-lg p-6 relative">
+                        <button 
+                            onClick={() => setIsAddModalOpen(false)}
+                            className="absolute top-4 right-4 text-text-muted hover:text-white"
+                        >
+                            ✕
+                        </button>
+                        <h3 className="text-lg font-bold text-white mb-4">Add Team</h3>
+                        
+                        <form onSubmit={handleAddTeam} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-medium text-text-muted mb-1">Team Name</label>
+                                <input
+                                    type="text"
+                                    value={formData.teamName}
+                                    onChange={(e) => setFormData({...formData, teamName: e.target.value})}
+                                    className="w-full bg-surface-highlight border border-white/10 rounded-lg px-4 py-2 text-white"
+                                    required
+                                    placeholder="Enter Team Name"
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-text-muted mb-1">Player 1 Name</label>
+                                    <input
+                                        type="text"
+                                        value={formData.player1}
+                                        onChange={(e) => setFormData({...formData, player1: e.target.value})}
+                                        className="w-full bg-surface-highlight border border-white/10 rounded-lg px-4 py-2 text-white"
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-text-muted mb-1">Player 2 Name (Optional)</label>
+                                    <input
+                                        type="text"
+                                        value={formData.player2}
+                                        onChange={(e) => setFormData({...formData, player2: e.target.value})}
+                                        className="w-full bg-surface-highlight border border-white/10 rounded-lg px-4 py-2 text-white"
+                                        placeholder="For Doubles"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-text-muted mb-1">Phone Number</label>
+                                    <input
+                                        type="tel"
+                                        value={formData.phone}
+                                        onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                                        className="w-full bg-surface-highlight border border-white/10 rounded-lg px-4 py-2 text-white"
+                                        required
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-text-muted mb-1">City</label>
+                                    <input
+                                        type="text"
+                                        value={formData.city}
+                                        onChange={(e) => setFormData({...formData, city: e.target.value})}
+                                        className="w-full bg-surface-highlight border border-white/10 rounded-lg px-4 py-2 text-white"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex justify-end gap-3 mt-6">
+                                <Button type="button" variant="secondary" onClick={() => setIsAddModalOpen(false)}>Cancel</Button>
+                                <Button type="submit">Add Team</Button>
+                            </div>
+                        </form>
+                    </Card>
+                </div>
+            )}
 
             <div className="grid gap-4">
                 {registrations.map((reg) => (

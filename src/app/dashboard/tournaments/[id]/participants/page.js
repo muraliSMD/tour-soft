@@ -77,10 +77,10 @@ export default function ParticipantsPage() {
             setIsModalOpen(false);
             setFormData({ teamName: '', player1: '', player2: '', phone: '', city: '' });
             fetchParticipants(); // Refresh list
-            alert("Participant added successfully!");
+            alert("Team added successfully!");
         } catch (error) {
             console.error(error);
-            alert("Failed to add participant");
+            alert("Failed to add team");
         }
     };
 
@@ -110,11 +110,11 @@ export default function ParticipantsPage() {
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-white">Participants ({participants.length})</h2>
+                <h2 className="text-xl font-bold text-white">Teams ({participants.length})</h2>
                 <div className="flex gap-3">
                     <Button variant="secondary" size="sm">Export CSV</Button>
                     {canManage && (
-                        <Button size="sm" onClick={() => setIsModalOpen(true)}>+ Add Participant</Button>
+                        <Button size="sm" onClick={() => setIsModalOpen(true)}>+ Add Team</Button>
                     )}
                 </div>
             </div>
@@ -124,7 +124,7 @@ export default function ParticipantsPage() {
                 onClose={() => setDeleteModal({ ...deleteModal, isOpen: false })}
                 onConfirm={confirmRemoveParticipant}
                 itemName={deleteModal.name}
-                title="Remove Participant"
+                title="Remove Team"
                 message={`Are you sure you want to remove ${deleteModal.name}? This cannot be undone.`}
             />
 
@@ -138,7 +138,7 @@ export default function ParticipantsPage() {
                         >
                             ✕
                         </button>
-                        <h3 className="text-lg font-bold text-white mb-4">Add Participant ({isDouble ? 'Doubles' : 'Singles'})</h3>
+                        <h3 className="text-lg font-bold text-white mb-4">Add Team ({isDouble ? 'Doubles' : 'Singles'})</h3>
                         
                         <form onSubmit={handleAddParticipant} className="space-y-4">
                             <div>
@@ -203,7 +203,7 @@ export default function ParticipantsPage() {
 
                             <div className="flex justify-end gap-3 mt-6">
                                 <Button type="button" variant="secondary" onClick={() => setIsModalOpen(false)}>Cancel</Button>
-                                <Button type="submit">Add Participant</Button>
+                                <Button type="submit">Add Team</Button>
                             </div>
                         </form>
                     </Card>
@@ -218,7 +218,7 @@ export default function ParticipantsPage() {
                         </svg>
                         <input 
                             type="text" 
-                            placeholder="Search participants..." 
+                            placeholder="Search teams..." 
                             className="w-full pl-10 pr-4 py-2 bg-transparent border-none text-white placeholder-text-muted focus:ring-0 focus:outline-none"
                         />
                     </div>
@@ -239,7 +239,7 @@ export default function ParticipantsPage() {
                             {isLoading ? (
                                 <tr><td colSpan="5" className="p-4 text-center text-text-muted">Loading...</td></tr>
                             ) : participants.length === 0 ? (
-                                <tr><td colSpan="5" className="p-4 text-center text-text-muted">No participants registered yet.</td></tr>
+                                <tr><td colSpan="5" className="p-4 text-center text-text-muted">No teams registered yet.</td></tr>
                             ) : (
                                 participants.map((p) => (
                                     <tr key={p._id} className="hover:bg-white/5 transition-colors group">

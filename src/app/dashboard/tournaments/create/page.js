@@ -8,18 +8,7 @@ import { useRouter } from 'next/navigation';
 import useTournamentStore from '@/store/useTournamentStore';
 
 const sports = [
-  "Counter-Strike 2",
-  "Valorant",
-  "League of Legends",
-  "Dota 2",
-  "Rocket League",
-  "Fortnite",
-  "Football (Soccer)",
-  "Basketball",
-  "Badminton",
-  "Cricket",
-  "Volleyball",
-  "Kabaddi"
+  "Badminton"
 ];
 
 const badmintonEvents = [
@@ -46,8 +35,8 @@ export default function CreateTournamentPage() {
 
   const [formData, setFormData] = useState({
       title: '',
-      game: '',
-      format: 'Single Elimination', // Default
+      game: 'Badminton',
+      format: 'Knockout Tournament (Single Elimination)',
       event: '', // For badminton events
       startDate: '',
       maxParticipants: 16
@@ -109,14 +98,13 @@ export default function CreateTournamentPage() {
                     onChange={onChange}
                     className="w-full bg-surface-highlight border border-white/10 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder-text-muted/50"
                     required
+                    disabled
                   >
-                    <option value="" disabled>Select a game</option>
-                    {sports.map(s => <option key={s} value={s}>{s}</option>)}
+                    <option value="Badminton">Badminton</option>
                   </select>
                </div>
 
-            {/* Badminton Event Selection - Only show when Badminton is selected */}
-            {game === 'Badminton' && (
+            {/* Badminton Event Selection */}
               <div>
                 <label className="block text-sm font-medium text-text-muted mb-1.5">Badminton Event</label>
                 <select 
@@ -130,13 +118,12 @@ export default function CreateTournamentPage() {
                   {badmintonEvents.map(e => <option key={e} value={e}>{e}</option>)}
                 </select>
               </div>
-            )}
              </div>
              
-             {/* Tournament Format - Different options for Badminton */}
+             {/* Tournament Format */}
              <div>
                   <label className="block text-sm font-medium text-text-muted mb-1.5">
-                    {game === 'Badminton' ? 'Tournament Type' : 'Format'}
+                    Tournament Type
                   </label>
                   <select 
                     name="format"
@@ -144,20 +131,9 @@ export default function CreateTournamentPage() {
                     onChange={onChange}
                     className="w-full bg-surface-highlight border border-white/10 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder-text-muted/50"
                   >
-                    {game === 'Badminton' ? (
-                      <>
-                        {badmintonTournamentTypes.map(type => (
-                          <option key={type} value={type}>{type}</option>
-                        ))}
-                      </>
-                    ) : (
-                      <>
-                        <option value="Single Elimination">Single Elimination</option>
-                        <option value="Double Elimination">Double Elimination</option>
-                        <option value="Round Robin">Round Robin</option>
-                        <option value="Swiss">Swiss</option>
-                      </>
-                    )}
+                      {badmintonTournamentTypes.map(type => (
+                        <option key={type} value={type}>{type}</option>
+                      ))}
                   </select>
              </div>
             
@@ -170,7 +146,7 @@ export default function CreateTournamentPage() {
                     type="date" 
                 />
                  <Input 
-                    label="Max Participants" 
+                    label="Max Teams" 
                     name="maxParticipants"
                     value={maxParticipants}
                     onChange={onChange}

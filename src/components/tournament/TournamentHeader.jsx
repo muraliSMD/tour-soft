@@ -18,9 +18,8 @@ const TournamentHeader = ({ tournamentId, title, status, game, event }) => {
 
     const alTabs = [
         { name: 'Overview', href: baseUrl, roles: ['owner', 'admin'] },
-        { name: 'Participants', href: `${baseUrl}/participants`, roles: ['owner', 'admin'] },
+        { name: 'Teams', href: `${baseUrl}/registrations`, roles: ['owner', 'admin'] },
         { name: 'Matches', href: `${baseUrl}/matches`, roles: ['owner', 'admin', 'referee'] },
-        { name: 'Registrations', href: `${baseUrl}/registrations`, roles: ['owner', 'admin'] },
         { name: 'Brackets', href: `${baseUrl}/brackets`, roles: ['owner', 'admin', 'referee'] },
         { name: 'Settings', href: `${baseUrl}/settings`, roles: ['owner', 'admin'] },
     ];

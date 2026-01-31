@@ -18,7 +18,7 @@ export default function TournamentOverviewPage() {
                     <h2 className="text-xl font-bold text-white mb-4">Tournament Description</h2>
                     <Card className="p-6">
                         <p className="text-text-muted leading-relaxed">
-                            Welcome to {activeTournament.title}! This tournament features {activeTournament.game} in a {activeTournament.format} format with up to {activeTournament.maxParticipants} participants.
+                            Welcome to {activeTournament.title}! This tournament features {activeTournament.game} in a {activeTournament.format} format with up to {activeTournament.maxParticipants} teams.
                         </p>
                     </Card>
                 </section>
@@ -50,7 +50,7 @@ export default function TournamentOverviewPage() {
                             <span className="text-white font-medium">{activeTournament.format}</span>
                         </div>
                         <div className="flex justify-between">
-                            <span className="text-text-muted">Max Participants</span>
+                            <span className="text-text-muted">Max Teams</span>
                             <span className="text-white font-medium">{activeTournament.maxParticipants}</span>
                         </div>
                         <div className="flex justify-between">
