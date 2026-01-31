@@ -26,6 +26,11 @@ export default function DashboardPage() {
 
     useEffect(() => {
         if (user) {
+            if (user.role === 'player' || user.role === 'user') {
+                router.replace('/dashboard/player');
+                return;
+            }
+            
             if (user.role === 'referee') {
                 fetchAssignedMatches();
             } else {
@@ -33,7 +38,11 @@ export default function DashboardPage() {
                 getMatches();
             }
         }
-    }, [getTournaments, getMatches, fetchAssignedMatches, user]);
+    }, [getTournaments, getMatches, fetchAssignedMatches, user, router]);
+
+    if (user?.role === 'player' || user?.role === 'user') {
+        return null; // Or a loading spinner while redirecting
+    }
 
     // Referee View Logic
     const refereeTournaments = [];

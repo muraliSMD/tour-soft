@@ -17,8 +17,9 @@ export async function POST(req) {
         
         const body = await req.json();
         const { email, password } = body;
-
-        const user = await User.findOne({ email });
+        const normalizedEmail = email.toLowerCase();
+        
+        const user = await User.findOne({ email: normalizedEmail });
 
         if (user && (await bcrypt.compare(password, user.password))) {
             if (user.isActive === false) {

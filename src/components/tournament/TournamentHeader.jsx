@@ -12,9 +12,13 @@ const TournamentHeader = ({ tournamentId, title, status, game, event }) => {
     const pathname = usePathname();
     const router = useRouter();
     const { user } = useAuthStore();
-    const { startTournament, isLoading } = useTournamentStore();
+    const { startTournament, resetTournament, updateTournament, isLoading } = useTournamentStore();
     const baseUrl = `/dashboard/tournaments/${tournamentId}`;
     const [isConfirmOpen, setIsConfirmOpen] = React.useState(false);
+    
+    // New Modals
+    const [isResetConfirmOpen, setIsResetConfirmOpen] = React.useState(false);
+    const [isCompleteConfirmOpen, setIsCompleteConfirmOpen] = React.useState(false);
 
     const alTabs = [
         { name: 'Overview', href: baseUrl, roles: ['owner', 'admin'] },
@@ -32,9 +36,27 @@ const TournamentHeader = ({ tournamentId, title, status, game, event }) => {
         try {
             await startTournament(tournamentId);
             setIsConfirmOpen(false);
-            // Status update handled by store, page might need refresh or store sync handles it
         } catch (error) {
             alert('Failed to start tournament: ' + (error.response?.data?.message || error.message));
+        }
+    };
+
+    const handleConfirmReset = async () => {
+        try {
+            await resetTournament(tournamentId);
+            setIsResetConfirmOpen(false);
+            window.location.reload(); // Refresh to ensure clean state view
+        } catch (error) {
+             alert('Failed to reset tournament: ' + (error.response?.data?.message || error.message));
+        }
+    };
+
+    const handleConfirmComplete = async () => {
+        try {
+             await updateTournament(tournamentId, { status: 'Completed' });
+             setIsCompleteConfirmOpen(false);
+        } catch (error) {
+              alert('Failed to complete tournament: ' + (error.response?.data?.message || error.message));
         }
     };
 
@@ -43,7 +65,11 @@ const TournamentHeader = ({ tournamentId, title, status, game, event }) => {
             <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-8">
                 <div>
                     <div className="flex items-center gap-3 mb-2">
-                        <span className="px-2.5 py-0.5 rounded-full bg-green-500/10 text-green-500 text-xs font-bold border border-green-500/20 uppercase tracking-wide">
+                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border uppercase tracking-wide
+                            ${status === 'Active' ? 'bg-green-500/10 text-green-500 border-green-500/20' : 
+                              status === 'Completed' ? 'bg-blue-500/10 text-blue-500 border-blue-500/20' : 
+                              'bg-yellow-500/10 text-yellow-500 border-yellow-500/20'}
+                        `}>
                             {status}
                         </span>
                         <span className="text-text-muted text-sm">{game} {event && `- ${event}`}</span>
@@ -59,6 +85,7 @@ const TournamentHeader = ({ tournamentId, title, status, game, event }) => {
                         >
                             Edit Details
                         </Button>
+                        
                         {status === 'Draft' && (
                             <Button 
                                 size="sm"
@@ -66,6 +93,39 @@ const TournamentHeader = ({ tournamentId, title, status, game, event }) => {
                                 disabled={isLoading}
                             >
                                 {isLoading ? 'Starting...' : 'Start Tournament'}
+                            </Button>
+                        )}
+
+                        {status === 'Active' && (
+                            <>
+                                <Button 
+                                    size="sm"
+                                    variant="danger" // Or warning
+                                    onClick={() => setIsResetConfirmOpen(true)}
+                                    disabled={isLoading}
+                                    className="bg-red-500/10 text-red-500 hover:bg-red-500/20 border-red-500/20"
+                                >
+                                    Reset
+                                </Button>
+                                <Button 
+                                    size="sm"
+                                    onClick={() => setIsCompleteConfirmOpen(true)}
+                                    disabled={isLoading}
+                                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                                >
+                                    End Tournament
+                                </Button>
+                            </>
+                        )}
+
+                         {status === 'Completed' && (
+                            <Button 
+                                size="sm"
+                                variant="secondary"
+                                onClick={() => setIsResetConfirmOpen(true)}
+                                disabled={isLoading}
+                            >
+                                Re-Open (Reset)
                             </Button>
                         )}
                     </div>
@@ -97,6 +157,24 @@ const TournamentHeader = ({ tournamentId, title, status, game, event }) => {
                 title="Start Tournament"
                 message="Are you sure you want to start the tournament? This will generate matches based on current participants."
                 confirmText="Start Now"
+            />
+
+            <DeleteConfirmationModal
+                isOpen={isResetConfirmOpen}
+                onClose={() => setIsResetConfirmOpen(false)}
+                onConfirm={handleConfirmReset}
+                title="Reset Tournament"
+                message="Are you sure? This will DELETE ALL MATCHES and scores. The tournament will be set back to DRAFT."
+                confirmText="Reset Everything"
+            />
+
+            <DeleteConfirmationModal
+                isOpen={isCompleteConfirmOpen}
+                onClose={() => setIsCompleteConfirmOpen(false)}
+                onConfirm={handleConfirmComplete}
+                title="End Tournament"
+                message="Are you sure you want to mark this tournament as Completed? You can re-open it later if needed."
+                confirmText="Mark as Done"
             />
         </div>
     );

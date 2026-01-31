@@ -17,7 +17,6 @@ export async function GET(req, { params }) {
         
         // Fetch matches for specific tournament
         const matches = await Match.find({ tournament: id })
-            .populate('team1.name team2.name') // Usually names are embedded, but if referee/users populate needed
             .populate('referee', 'name')
             .populate('tournament', 'title');
 

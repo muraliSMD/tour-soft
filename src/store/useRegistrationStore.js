@@ -23,7 +23,7 @@ const useRegistrationStore = create((set) => ({
     getTournamentRegistrations: async (tournamentId) => {
         set({ isLoading: true, isError: false });
         try {
-            const response = await api.get(`/registrations/tournament/${tournamentId}`);
+            const response = await api.get(`/tournaments/${tournamentId}/registrations`);
             set({ registrations: response.data, isLoading: false, isSuccess: true });
         } catch (error) {
             const message = error.response?.data?.message || error.message;
@@ -34,7 +34,7 @@ const useRegistrationStore = create((set) => ({
     registerTeam: async (tournamentId, teamData) => {
         set({ isLoading: true, isError: false });
         try {
-            const response = await api.post(`/registrations/tournament/${tournamentId}/register`, teamData);
+            const response = await api.post(`/tournaments/${tournamentId}/register`, teamData);
             set((state) => ({
                 registrations: [...state.registrations, response.data],
                 isSuccess: true,
