@@ -165,21 +165,25 @@ const BracketViewer = ({ matches = [], format }) => {
     const sortedRounds = Object.keys(rounds); // manual text might not sort well, but better than nothing
 
     return (
-        <div className="overflow-x-auto pb-8">
-            <div className="flex gap-12 min-w-max p-4">
-                {sortedRounds.map(roundName => (
-                    <div key={roundName} className="flex flex-col gap-6">
-                        <h3 className="text-lg font-bold text-white text-center border-b border-white/10 pb-2 mb-2">
-                            {roundName}
-                        </h3>
-                        <div className="flex flex-col gap-6 justify-center h-full">
-                            {rounds[roundName].map((match) => (
-                                <MatchNode key={match._id} match={match} />
-                            ))}
+        <div className="relative group/bracket">
+            <div className="overflow-x-auto pb-8 no-scrollbar scroll-smooth">
+                <div className="flex gap-12 min-w-max p-4">
+                    {sortedRounds.map(roundName => (
+                        <div key={roundName} className="flex flex-col gap-6">
+                            <h3 className="text-sm font-bold text-primary text-center border-b border-white/5 pb-3 mb-2 uppercase tracking-widest bg-white/5 py-1 rounded-t-lg">
+                                {roundName}
+                            </h3>
+                            <div className="flex flex-col gap-6 justify-center h-full">
+                                {rounds[roundName].map((match) => (
+                                    <MatchNode key={match._id} match={match} />
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
+            {/* Scroll Hint Gradient (Mobile) */}
+            <div className="absolute right-0 top-0 bottom-8 w-12 bg-gradient-to-l from-background to-transparent pointer-events-none md:hidden" />
         </div>
     );
 };

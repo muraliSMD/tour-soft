@@ -87,13 +87,14 @@ const TournamentHeader = ({ tournamentId, title, status, game, event }) => {
                     <h1 className="text-3xl font-bold text-white">{title}</h1>
                 </div>
                 {user?.role !== 'referee' && (
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-3">
                         <Button 
                             variant="secondary" 
                             size="sm"
                             onClick={() => router.push(`${baseUrl}/settings`)}
+                            className="flex-1 sm:flex-none justify-center"
                         >
-                            Edit Details
+                            Edit
                         </Button>
                         
                         {status === 'Draft' && (
@@ -101,19 +102,20 @@ const TournamentHeader = ({ tournamentId, title, status, game, event }) => {
                                 size="sm"
                                 onClick={() => setIsConfirmOpen(true)}
                                 disabled={isLoading}
+                                className="flex-1 sm:flex-none justify-center"
                             >
-                                {isLoading ? 'Starting...' : 'Start Tournament'}
+                                {isLoading ? 'Starting...' : 'Start'}
                             </Button>
                         )}
 
                         {status === 'Active' && (
-                            <>
+                            <div className="flex items-center gap-2 w-full sm:w-auto">
                                 <Button 
                                     size="sm"
-                                    variant="danger" // Or warning
+                                    variant="danger"
                                     onClick={() => setIsResetConfirmOpen(true)}
                                     disabled={isLoading}
-                                    className="bg-red-500/10 text-red-500 hover:bg-red-500/20 border-red-500/20"
+                                    className="flex-1 sm:flex-none bg-red-500/10 text-red-500 hover:bg-red-500/20 border-red-500/20"
                                 >
                                     Reset
                                 </Button>
@@ -121,11 +123,11 @@ const TournamentHeader = ({ tournamentId, title, status, game, event }) => {
                                     size="sm"
                                     onClick={() => setIsCompleteConfirmOpen(true)}
                                     disabled={isLoading}
-                                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                                    className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-700 text-white"
                                 >
-                                    End Tournament
+                                    End
                                 </Button>
-                            </>
+                            </div>
                         )}
 
                          {status === 'Completed' && (
@@ -134,21 +136,22 @@ const TournamentHeader = ({ tournamentId, title, status, game, event }) => {
                                 variant="secondary"
                                 onClick={() => setIsResetConfirmOpen(true)}
                                 disabled={isLoading}
+                                className="flex-1 sm:flex-none justify-center"
                             >
-                                Re-Open (Reset)
+                                Re-Open
                             </Button>
                         )}
                     </div>
                 )}
             </div>
 
-            <div className="flex items-center gap-6 overflow-x-auto">
+            <div className="flex items-center gap-6 overflow-x-auto no-scrollbar -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
                 {tabs.map((tab) => (
                     <Link 
                         key={tab.name} 
                         href={tab.href}
                         className={`
-                            pb-4 text-sm font-medium border-b-2 transition-colors whitespace-nowrap
+                            pb-4 text-sm font-bold border-b-2 transition-all whitespace-nowrap
                             ${isActive(tab.href) 
                                 ? 'border-primary text-white' 
                                 : 'border-transparent text-text-muted hover:text-white hover:border-white/10'}

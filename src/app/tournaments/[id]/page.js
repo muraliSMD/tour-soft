@@ -241,29 +241,28 @@ function MatchCard({ match, simple, getTeamMembers }) {
     const t2MembersStr = team2Members.map(m => m.name).join(', ');
 
     return (
-        <Card className="p-4 hover:border-primary/30 transition-colors">
-            <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                <div className="flex items-center justify-between w-full md:w-auto md:gap-8 flex-1">
+        <Card className="p-4 hover:border-primary/30 transition-all duration-300">
+            <div className="flex flex-col gap-4">
+                <div className="flex items-center justify-between gap-2 sm:gap-4 flex-1">
                     {/* Team 1 */}
-                    <div className={`flex-1 text-right ${match.winner === 'team1' ? 'text-green-500 font-bold' : 'text-white'}`}>
-                        <div className="text-lg">{team1Name}</div>
+                    <div className={`flex-1 text-right flex flex-col items-end ${match.winner === 'team1' ? 'text-green-500' : 'text-white'}`}>
+                        <div className="text-sm sm:text-lg font-bold truncate max-w-[120px] sm:max-w-none">{team1Name}</div>
                         {t1MembersStr && t1MembersStr !== team1Name && (
-                            <div className="text-xs text-text-muted">{t1MembersStr}</div>
+                            <div className="text-[10px] sm:text-xs text-text-muted truncate max-w-[100px] sm:max-w-none">{t1MembersStr}</div>
                         )}
-                        {!simple && <div className="text-3xl font-mono mt-1">{match.team1?.score || 0}</div>}
+                        {!simple && <div className="text-2xl sm:text-3xl font-mono mt-1 font-bold">{match.team1?.score || 0}</div>}
                     </div>
 
                     {/* VS / Status */}
-                    <div className="px-4 text-center">
-                        {/* Display Round/Group Name */}
+                    <div className="px-2 sm:px-4 text-center min-w-[80px] sm:min-w-[100px]">
                         {(match.group || match.round) && (
-                            <div className="text-xs font-bold text-primary mb-1">
+                            <div className="text-[10px] font-bold text-primary mb-1 uppercase tracking-wider">
                                 {match.group || `Round ${match.round}`}
                             </div>
                         )}
-                        <div className="text-xs text-text-muted mb-1">vs</div>
-                        <span className={`text-[10px] px-2 py-0.5 rounded-full uppercase border ${
-                            match.status === 'in-progress' ? 'bg-red-500/10 text-red-500 border-red-500/20' :
+                        <div className="text-xs text-text-muted mb-1 font-medium italic">vs</div>
+                        <span className={`text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full uppercase border font-bold ${
+                            match.status === 'in-progress' ? 'bg-red-500/10 text-red-500 border-red-500/20 animate-pulse' :
                             match.status === 'completed' ? 'bg-green-500/10 text-green-500 border-green-500/20' :
                             'bg-white/5 text-text-muted border-white/10'
                         }`}>
@@ -272,12 +271,12 @@ function MatchCard({ match, simple, getTeamMembers }) {
                     </div>
 
                     {/* Team 2 */}
-                    <div className={`flex-1 text-left ${match.winner === 'team2' ? 'text-green-500 font-bold' : 'text-white'}`}>
-                        <div className="text-lg">{team2Name}</div>
+                    <div className={`flex-1 text-left flex flex-col items-start ${match.winner === 'team2' ? 'text-green-500' : 'text-white'}`}>
+                        <div className="text-sm sm:text-lg font-bold truncate max-w-[120px] sm:max-w-none">{team2Name}</div>
                         {t2MembersStr && t2MembersStr !== team2Name && (
-                             <div className="text-xs text-text-muted">{t2MembersStr}</div>
+                             <div className="text-[10px] sm:text-xs text-text-muted truncate max-w-[100px] sm:max-w-none">{t2MembersStr}</div>
                         )}
-                        {!simple && <div className="text-3xl font-mono mt-1">{match.team2?.score || 0}</div>}
+                        {!simple && <div className="text-2xl sm:text-3xl font-mono mt-1 font-bold">{match.team2?.score || 0}</div>}
                     </div>
                 </div>
             </div>
