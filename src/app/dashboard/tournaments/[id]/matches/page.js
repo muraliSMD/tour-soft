@@ -155,6 +155,16 @@ export default function TournamentMatchesPage() {
                                     required
                                 />
                             </div>
+                            <div>
+                                <label className="block text-sm font-medium text-text-muted mb-1.5">Round Name</label>
+                                <input
+                                    type="text"
+                                    value={formData.group || ''}
+                                    onChange={(e) => setFormData({ ...formData, group: e.target.value })}
+                                    className="w-full bg-surface-highlight border border-white/10 rounded-lg px-4 py-2.5 text-white"
+                                    placeholder="e.g. Semi-Final, Final, Group A"
+                                />
+                            </div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
@@ -208,7 +218,7 @@ export default function TournamentMatchesPage() {
                         <div className="flex justify-between items-start mb-4">
                             <div>
                                 <h3 className="text-lg font-semibold text-white mb-2">
-                                    Match #{match.matchNumber}
+                                    Match #{match.matchNumber} {match.group ? `- ${match.group}` : ''}
                                 </h3>
                                 <div className="flex gap-8 text-sm">
                                     <div>

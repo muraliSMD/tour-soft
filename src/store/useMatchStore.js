@@ -74,9 +74,11 @@ const useMatchStore = create((set) => ({
         set({ isLoading: true, isError: false });
         try {
             const response = await api.put(`/matches/${matchId}/assign-referee`, { refereeId });
+            const updatedMatch = response.data.success ? response.data.data : response.data;
+            
             set((state) => ({
                 matches: state.matches.map(m => 
-                    m._id === matchId ? response.data : m
+                    m._id === matchId ? updatedMatch : m
                 ),
                 isLoading: false,
                 isSuccess: true

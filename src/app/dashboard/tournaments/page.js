@@ -4,17 +4,20 @@ import React, { useEffect } from 'react';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import Loader from '@/components/ui/Loader';
 import useTournamentStore from '@/store/useTournamentStore';
+import useAuthStore from '@/store/useAuthStore';
 
 export default function TournamentsListPage() {
     const { tournaments, getTournaments, isLoading } = useTournamentStore();
+    const { user } = useAuthStore();
 
     useEffect(() => {
         getTournaments();
     }, [getTournaments]);
 
     if (isLoading) {
-        return <div className="text-white text-center py-10">Loading tournaments...</div>;
+        return <Loader fullScreen text="Loading tournaments..." />;
     }
 
     return (
@@ -24,9 +27,11 @@ export default function TournamentsListPage() {
                     <h1 className="text-2xl font-bold text-white">My Tournaments</h1>
                     <p className="text-text-muted">Manage your upcoming and past events.</p>
                 </div>
-                <Link href="/dashboard/tournaments/create">
-                    <Button>+ Create Tournament</Button>
-                </Link>
+                {user?.role !== 'referee' && (
+                    <Link href="/dashboard/tournaments/create">
+                        <Button>+ Create Tournament</Button>
+                    </Link>
+                )}
             </div>
 
             <div className="grid grid-cols-1 gap-4">
@@ -39,9 +44,11 @@ export default function TournamentsListPage() {
                         </div>
                         <h3 className="text-xl font-medium text-white mb-2">No Tournaments found</h3>
                         <p className="text-text-muted mb-6">Get started by creating your first tournament.</p>
-                        <Link href="/dashboard/tournaments/create">
-                            <Button>Create Tournament</Button>
-                        </Link>
+                        {user?.role !== 'referee' && (
+                            <Link href="/dashboard/tournaments/create">
+                                <Button>Create Tournament</Button>
+                            </Link>
+                        )}
                     </Card>
                 ) : (
                     tournaments.map((t) => (

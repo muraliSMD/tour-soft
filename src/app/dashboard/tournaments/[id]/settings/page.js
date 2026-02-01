@@ -90,21 +90,33 @@ const badmintonTournamentTypes = [
 
 function UpdateTournamentForm({ tournamentId }) {
     const { getTournament, activeTournament, updateTournament, isLoading } = useTournamentStore();
-    const [format, setFormat] = React.useState('');
+    const [formData, setFormData] = React.useState({
+        title: '',
+        format: '',
+        startDate: '',
+        maxParticipants: 16
+    });
     const [message, setMessage] = React.useState('');
 
     React.useEffect(() => {
         if (!activeTournament) {
             getTournament(tournamentId);
         } else {
-            setFormat(activeTournament.format || 'Knockout Tournament (Single Elimination)');
+            setFormData({
+                title: activeTournament.title || activeTournament.name || '',
+                format: activeTournament.format || 'Knockout Tournament (Single Elimination)',
+                startDate: activeTournament.startDate || '',
+                maxParticipants: activeTournament.maxParticipants || 16
+            });
         }
     }, [activeTournament, tournamentId]);
 
     const handleUpdate = async () => {
         try {
-            await updateTournament(tournamentId, { format });
-            setMessage('Format updated successfully. Please restart brackets if needed.');
+            console.log('Sending update:', formData);
+            const res = await updateTournament(tournamentId, formData);
+            console.log('Update response:', res);
+            setMessage('Settings updated successfully.');
             setTimeout(() => setMessage(''), 3000);
         } catch (error) {
             console.error('Update failed', error);
@@ -118,12 +130,24 @@ function UpdateTournamentForm({ tournamentId }) {
             
             <div className="space-y-4 max-w-md">
                 <div>
+                    <label className="block text-sm font-medium text-text-muted mb-1.5">
+                        Tournament Name
+                    </label>
+                    <input 
+                        type="text"
+                        value={formData.title}
+                        onChange={(e) => setFormData({...formData, title: e.target.value})}
+                        className="w-full bg-surface-highlight border border-white/10 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                    />
+                </div>
+
+                <div>
                   <label className="block text-sm font-medium text-text-muted mb-1.5">
                     Tournament Type
                   </label>
                   <select 
-                    value={format}
-                    onChange={(e) => setFormat(e.target.value)}
+                    value={formData.format}
+                    onChange={(e) => setFormData({...formData, format: e.target.value})}
                     className="w-full bg-surface-highlight border border-white/10 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
                   >
                       {badmintonTournamentTypes.map(type => (
@@ -132,7 +156,32 @@ function UpdateTournamentForm({ tournamentId }) {
                   </select>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label className="block text-sm font-medium text-text-muted mb-1.5">
+                            Start Date
+                        </label>
+                        <input 
+                            type="date"
+                            value={formData.startDate ? new Date(formData.startDate).toISOString().split('T')[0] : ''}
+                            onChange={(e) => setFormData({...formData, startDate: e.target.value})}
+                            className="w-full bg-surface-highlight border border-white/10 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                        />
+                    </div>
+                     <div>
+                        <label className="block text-sm font-medium text-text-muted mb-1.5">
+                            Max Participants
+                        </label>
+                        <input 
+                            type="number"
+                            value={formData.maxParticipants}
+                            onChange={(e) => setFormData({...formData, maxParticipants: e.target.value})}
+                            className="w-full bg-surface-highlight border border-white/10 rounded-lg px-4 py-2.5 text-white focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                        />
+                    </div>
+                </div>
+
+                <div className="flex items-center gap-4 pt-4">
                     <Button onClick={handleUpdate} disabled={isLoading}>
                         {isLoading ? 'Saving...' : 'Save Changes'}
                     </Button>

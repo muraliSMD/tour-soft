@@ -31,7 +31,18 @@ const userSchema = mongoose.Schema({
         default: true
     },
     // Enhanced profile fields
-    academyName: { type: String },
+    academyName: { type: String }, // @deprecated - Moved to Academy model
+    associatedAcademies: [{
+        academy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Academy'
+        },
+        role: {
+            type: String,
+            enum: ['owner', 'admin', 'referee'],
+            default: 'admin'
+        }
+    }],
     phone: { type: String },
     pincode: { type: String },
     city: { type: String },

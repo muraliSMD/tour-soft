@@ -7,12 +7,12 @@ import { protect } from '@/lib/auth';
 import mongoose from 'mongoose';
 
 // Ensure models are registered
-import '@/models/Match';
-import '@/models/Registration';
+import '@/models/Academy'; // Ensure Academy model is registered for populate
 
 export async function GET(req, { params }) {
     try {
-        const user = await protect(req);
+        // GET is public, no protect check needed. 
+        // Logic doesn't use 'user' variable.
         await connectDB();
         
         const { id } = await params;
@@ -21,13 +21,13 @@ export async function GET(req, { params }) {
             return NextResponse.json({ message: 'Invalid tournament ID format' }, { status: 400 });
         }
         
-        const tournament = await Tournament.findById(id);
+        const tournament = await Tournament.findById(id).populate('academy');
 
         if (!tournament) {
-            return NextResponse.json({ message: 'Tournament not found' }, { status: 404 });
+            return NextResponse.json({ success: false, message: 'Tournament not found' }, { status: 404 });
         }
 
-        return NextResponse.json(tournament);
+        return NextResponse.json({ success: true, data: tournament });
     } catch (error) {
         console.error('Error fetching tournament:', error);
         return NextResponse.json({ message: error.message || 'Server error' }, { status: 500 });
@@ -53,13 +53,27 @@ export async function PUT(req, { params }) {
         }
 
         const body = await req.json();
+        console.log('PUT Body:', body);
+        
+        // Destructure only allowed fields to update
+        const { title, format, maxParticipants, startDate, endDate, status } = body;
+        
+        const updateData = {};
+        if (title) updateData.title = title;
+        if (format) updateData.format = format;
+        if (maxParticipants) updateData.maxParticipants = maxParticipants;
+        if (startDate) updateData.startDate = startDate;
+        if (endDate) updateData.endDate = endDate;
+        if (status) updateData.status = status;
 
-        tournament = await Tournament.findByIdAndUpdate(id, body, {
+        console.log('UpdateData constructed:', updateData);
+
+        tournament = await Tournament.findByIdAndUpdate(id, updateData, {
             new: true,
             runValidators: true
-        });
+        }).populate('academy');
 
-        return NextResponse.json(tournament);
+        return NextResponse.json({ success: true, data: tournament });
     } catch (error) {
          console.error('Error updating tournament:', error);
          return NextResponse.json({ message: error.message || 'Server error' }, { status: 500 });

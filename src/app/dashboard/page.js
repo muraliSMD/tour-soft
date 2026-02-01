@@ -2,8 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { Plus } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import Loader from '@/components/ui/Loader';
 import useTournamentStore from '@/store/useTournamentStore';
 import useMatchStore from '@/store/useMatchStore';
 import useAuthStore from '@/store/useAuthStore';
@@ -41,7 +43,7 @@ export default function DashboardPage() {
     }, [getTournaments, getMatches, fetchAssignedMatches, user, router]);
 
     if (user?.role === 'player' || user?.role === 'user') {
-        return null; // Or a loading spinner while redirecting
+        return <Loader fullScreen text="Redirecting to Player Dashboard..." />;
     }
 
     // Referee View Logic
@@ -121,81 +123,97 @@ export default function DashboardPage() {
         );
     }
 
-    // --- OWNER VIEW ---
-    const [admins, setAdmins] = useState([]);
+    // --- OWNER & ADMIN VIEW ---
+    const [academies, setAcademies] = useState([]);
     
     useEffect(() => {
-        if (user?.role === 'owner') {
-            const fetchAdmins = async () => {
+        if (user?.role === 'owner' || user?.role === 'admin') {
+            const fetchAcademies = async () => {
                 try {
-                    const response = await api.get('/users?role=admin');
-                    setAdmins(response.data);
+                    const response = await api.get('/academies');
+                    setAcademies(response.data.data);
                 } catch (error) {
-                    console.error("Failed to fetch admins", error);
+                    console.error("Failed to fetch academies", error);
                 }
             };
-            fetchAdmins();
+            fetchAcademies();
         }
     }, [user]);
 
-    if (user?.role === 'owner') {
+    if (user?.role === 'owner' || user?.role === 'admin') {
         return (
             <div className="space-y-8">
-                <div>
-                     <h1 className="text-2xl font-bold text-white">Owner Dashboard</h1>
-                     <p className="text-text-muted">Manage your Academies (Admins)</p>
+                <div className="flex justify-between items-center">
+                     <div>
+                        <h1 className="text-2xl font-bold text-white">{user.role === 'owner' ? 'Owner' : 'Admin'} Dashboard</h1>
+                        <p className="text-text-muted">Manage your Academies</p>
+                     </div>
+                     {user.role === 'owner' && (
+                        <Link href="/dashboard/academies/create">
+                            <Button>+ Create New Academy</Button>
+                        </Link>
+                     )}
                 </div>
 
+                {academies.length === 0 ? (
+                     <Card className="p-12 text-center">
+                        <p className="text-text-muted mb-4">You are not associated with any academies yet.</p>
+                        {user.role === 'owner' && (
+                            <Link href="/dashboard/academies/create">
+                                <Button>Create Your First Academy</Button> 
+                            </Link>
+                        )}
+                    </Card>
+                ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {admins.map((admin) => (
-                        <Link key={admin._id} href={`/dashboard/admin/${admin._id}`}>
-                            <Card className="p-6 hover:border-primary/30 transition-colors cursor-pointer group">
+                    {academies.map((academy) => (
+                        <Link key={academy._id} href={`/dashboard/academies/${academy._id}`}>
+                            <Card className="p-6 hover:border-primary/30 transition-all cursor-pointer group h-full flex flex-col">
                                 <div className="flex items-center gap-4 mb-4">
-                                    <div className="h-14 w-14 rounded-full bg-surface-highlight flex items-center justify-center text-xl font-bold text-primary border border-white/5">
-                                        {admin.name.charAt(0).toUpperCase()}
-                                    </div>
-                                    <div>
-                                        <h3 className="text-lg font-bold text-white group-hover:text-primary transition-colors">
-                                            {admin.academyName}
-                                        </h3>
-                                        <p className="text-xs text-text-muted uppercase tracking-wider">{admin.name}</p>
-                                    </div>
-                                </div>
-                                <div className="space-y-2 text-sm text-text-muted">
-                                    <div className="flex items-center gap-2">
-                                        <span className="w-4 h-4 opacity-50">📧</span>
-                                        {admin.email}
-                                    </div>
-                                    {admin.sports && admin.sports.length > 0 && (
-                                        <div className="flex items-center gap-2">
-                                            <span className="w-4 h-4 opacity-50">🏆</span>
-                                            {admin.sports.join(', ')}
+                                    {academy.logo && academy.logo !== 'no-photo.jpg' ? (
+                                        <img src={academy.logo} alt={academy.name} className="h-14 w-14 rounded-xl object-cover border border-white/10" />
+                                    ) : (
+                                        <div className="h-14 w-14 rounded-xl bg-surface-highlight flex items-center justify-center text-xl font-bold text-primary border border-white/5">
+                                            {academy.name.charAt(0).toUpperCase()}
                                         </div>
                                     )}
+                                    <div>
+                                        <h3 className="text-lg font-bold text-white group-hover:text-primary transition-colors line-clamp-1">
+                                            {academy.name}
+                                        </h3>
+                                        <p className="text-xs text-text-muted uppercase tracking-wider">{academy.location?.city || 'No Location'}</p>
+                                    </div>
+                                </div>
+                                <div className="space-y-2 text-sm text-text-muted flex-1">
+                                    <div className="flex items-center gap-2">
+                                        <span className="w-4 h-4 opacity-50">🏆</span>
+                                        {academy.sports && academy.sports.length > 0 ? academy.sports.join(', ') : 'Badminton'}
+                                    </div>
                                 </div>
                                 <div className="mt-6 pt-4 border-t border-white/5 flex justify-between items-center">
-                                    <span className="text-xs font-medium text-text-muted group-hover:text-white transition-colors">View Activity</span>
-                                    <span className="text-primary">→</span>
+                                    <span className="text-xs font-medium text-text-muted group-hover:text-white transition-colors">Manage Academy</span>
+                                    <span className="text-primary group-hover:translate-x-1 transition-transform">→</span>
                                 </div>
                             </Card>
                         </Link>
                     ))}
                     
-                    {/* Add New Admin Card */}
-                    <Link href="/dashboard/users">
-                        <Card className="p-6 h-full flex flex-col items-center justify-center border-dashed border-white/10 hover:border-primary/50 hover:bg-white/5 transition-all cursor-pointer min-h-[200px]">
-                            <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-2xl text-primary mb-3">
-                                +
-                            </div>
-                            <span className="font-medium text-white">Add New Academy</span>
-                        </Card>
-                    </Link>
+                    {/* Add New Academy Card - Only for Owner */}
+                    {user.role === 'owner' && (
+                        <Link href="/dashboard/academies/create">
+                            <Card className="p-6 h-full flex flex-col items-center justify-center border-dashed border-white/10 hover:border-primary/50 hover:bg-white/5 transition-all cursor-pointer min-h-[200px]">
+                                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-2xl text-primary mb-3">
+                                    <Plus />
+                                </div>
+                                <span className="font-medium text-white">Add New Academy</span>
+                            </Card>
+                        </Link>
+                    )}
                 </div>
+                )}
             </div>
         );
     }
-    
-    // --- ADMIN VIEW (Standard Dashboard) ---
     return (
         <div className="space-y-8">
             {/* Header / Stats */}
