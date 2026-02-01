@@ -4,6 +4,7 @@ import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Save, Loader2, Trash2, Plus } from 'lucide-react';
 import Link from 'next/link';
+import DeleteConfirmationModal from '@/components/ui/DeleteConfirmationModal';
 import useAuthStore from '@/store/useAuthStore';
 import api from '@/lib/axios';
 
@@ -89,6 +90,7 @@ export default function AcademySettingsPage({ params }) {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     
     // Basic form state
     const [formData, setFormData] = useState({
@@ -300,7 +302,6 @@ export default function AcademySettingsPage({ params }) {
                     </div>
                 </form>
 
-                {/* DANGER ZONE - OWNER ONLY */}
                 {user?.role === 'owner' && (
                     <div className="mt-12 pt-8 border-t border-red-500/20">
                         <h3 className="text-lg font-bold text-red-500 mb-2">Danger Zone</h3>
@@ -310,7 +311,7 @@ export default function AcademySettingsPage({ params }) {
                                 <div className="text-sm text-text-muted">This action cannot be undone. All tournaments and matches will be lost.</div>
                             </div>
                             <button 
-                                onClick={() => {/* TODO: Wire up delete modal */ alert('Delete functionality coming next') }}
+                                onClick={() => setDeleteModalOpen(true)}
                                 className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition"
                             >
                                 Delete Academy
@@ -319,6 +320,21 @@ export default function AcademySettingsPage({ params }) {
                     </div>
                 )}
             </div>
+
+            <DeleteConfirmationModal 
+                isOpen={deleteModalOpen}
+                onClose={() => setDeleteModalOpen(false)}
+                onConfirm={async () => {
+                   try {
+                       await api.delete(`/academies/${id}`);
+                       router.push('/dashboard/academies');
+                   } catch (err) {
+                       alert('Failed to delete academy');
+                   }
+                }}
+                title="Delete Academy"
+                message="Are you absolutely sure? This will permanently delete the academy and all associated data."
+            />
         </div>
     );
 }
