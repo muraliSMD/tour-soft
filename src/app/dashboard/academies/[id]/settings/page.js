@@ -103,7 +103,10 @@ export default function AcademySettingsPage({ params }) {
         logo: '',
         bannerImage: '',
         gallery: [],
-        sports: []
+        sports: [],
+        street: '',
+        state: '',
+        zipcode: ''
     });
 
     useEffect(() => {
@@ -126,7 +129,10 @@ export default function AcademySettingsPage({ params }) {
                     logo: a.logo || '',
                     bannerImage: a.bannerImage || '',
                     gallery: a.gallery || [],
-                    sports: a.sports || []
+                    sports: a.sports || [],
+                    street: a.location?.street || '',
+                    state: a.location?.state || '',
+                    zipcode: a.location?.zipcode || ''
                 });
             } else {
                 setError(data.error);
@@ -155,7 +161,10 @@ export default function AcademySettingsPage({ params }) {
             const payload = {
                 ...formData,
                 location: {
-                    city: formData.city
+                    city: formData.city,
+                    street: formData.street,
+                    state: formData.state,
+                    zipcode: formData.zipcode
                 }
             };
 
@@ -280,6 +289,124 @@ export default function AcademySettingsPage({ params }) {
                                         }}
                                     />
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <h2 className="text-lg font-semibold text-white border-b border-white/5 pb-2">Location & Address</h2>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-text-muted mb-1">Street Address</label>
+                                <input
+                                    type="text"
+                                    name="street"
+                                    value={formData.street}
+                                    onChange={handleChange}
+                                    placeholder="123 Sport Ave"
+                                    className="w-full bg-background border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-text-muted mb-1">City</label>
+                                <input
+                                    type="text"
+                                    name="city"
+                                    value={formData.city}
+                                    onChange={handleChange}
+                                    placeholder="City"
+                                    className="w-full bg-background border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-text-muted mb-1">State / Province</label>
+                                <input
+                                    type="text"
+                                    name="state"
+                                    value={formData.state}
+                                    onChange={handleChange}
+                                    placeholder="State"
+                                    className="w-full bg-background border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-text-muted mb-1">Zip / Postal Code</label>
+                                <input
+                                    type="text"
+                                    name="zipcode"
+                                    value={formData.zipcode}
+                                    onChange={handleChange}
+                                    placeholder="Zip Code"
+                                    className="w-full bg-background border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <h2 className="text-lg font-semibold text-white border-b border-white/5 pb-2">Contact Information</h2>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-text-muted mb-1">Contact Email</label>
+                                <input
+                                    type="email"
+                                    name="contactEmail"
+                                    value={formData.contactEmail}
+                                    onChange={handleChange}
+                                    placeholder="info@academy.com"
+                                    className="w-full bg-background border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-text-muted mb-1">Contact Phone</label>
+                                <input
+                                    type="text"
+                                    name="contactPhone"
+                                    value={formData.contactPhone}
+                                    onChange={handleChange}
+                                    placeholder="+1 234 567 890"
+                                    className="w-full bg-background border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                />
+                            </div>
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-medium text-text-muted mb-1">Website</label>
+                                <input
+                                    type="url"
+                                    name="website"
+                                    value={formData.website}
+                                    onChange={handleChange}
+                                    placeholder="https://academy.com"
+                                    className="w-full bg-background border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <h2 className="text-lg font-semibold text-white border-b border-white/5 pb-2">Sports Offered</h2>
+                        <div>
+                            <div className="flex flex-wrap gap-3">
+                                {['Badminton'].map(sport => (
+                                    <button
+                                        key={sport}
+                                        type="button"
+                                        onClick={() => {
+                                            const newSports = formData.sports.includes(sport)
+                                                ? formData.sports.filter(s => s !== sport)
+                                                : [...formData.sports, sport];
+                                            setFormData(prev => ({ ...prev, sports: newSports }));
+                                        }}
+                                        className={`px-4 py-2 rounded-lg border transition-all ${
+                                            formData.sports.includes(sport)
+                                                ? 'bg-primary border-primary text-white shadow-lg shadow-primary/20'
+                                                : 'bg-background border-white/10 text-text-muted hover:border-white/20'
+                                        }`}
+                                    >
+                                        {sport}
+                                    </button>
+                                ))}
                             </div>
                         </div>
                     </div>

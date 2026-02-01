@@ -79,3 +79,37 @@ export async function PUT(request, { params }) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
+
+export async function DELETE(request, { params }) {
+  try {
+    await connectDB();
+    
+    let user;
+    try {
+        user = await protect(request);
+    } catch (e) {
+        return NextResponse.json({ success: false, error: 'Not authorized' }, { status: 401 });
+    }
+
+    const { id } = await params;
+
+    let academy = await Academy.findById(id);
+
+    if (!academy) {
+      return NextResponse.json({ success: false, error: 'Academy not found' }, { status: 404 });
+    }
+
+    // Check ownership ONLY for deletion
+    const isOwner = academy.owner.toString() === user.id;
+    
+    if (!isOwner) {
+        return NextResponse.json({ success: false, error: 'Only the Academy Owner can delete this academy' }, { status: 403 });
+    }
+
+    await Academy.findByIdAndDelete(id);
+
+    return NextResponse.json({ success: true, message: 'Academy deleted successfully' });
+  } catch (error) {
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
+}

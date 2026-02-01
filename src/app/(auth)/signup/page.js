@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { Eye, EyeOff } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Card from '@/components/ui/Card';
@@ -22,6 +23,8 @@ export default function SignupPage() {
 
   const { name, email, password, confirmPassword } = formData;
   const [passwordError, setPasswordError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     if (user || isSuccess) {
@@ -86,25 +89,43 @@ export default function SignupPage() {
         <Input 
             label="Password" 
             name="password"
-            type="password" 
+            type={showPassword ? "text" : "password"} 
             value={password}
             onChange={onChange}
             placeholder="••••••••" 
             className="bg-background/50"
             required
             minLength={6}
+            rightElement={
+                <button 
+                    type="button" 
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="text-text-muted hover:text-white transition-colors"
+                >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+            }
         />
 
          <Input 
             label="Confirm Password" 
             name="confirmPassword"
-            type="password" 
+            type={showConfirmPassword ? "text" : "password"} 
             value={confirmPassword}
             onChange={onChange}
             placeholder="••••••••" 
             className="bg-background/50"
             required
             minLength={6}
+            rightElement={
+                <button 
+                    type="button" 
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="text-text-muted hover:text-white transition-colors"
+                >
+                    {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+            }
         />
 
         <div className="flex items-center gap-2 text-sm text-text-muted py-2">
