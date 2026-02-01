@@ -6,6 +6,11 @@ const tournamentSchema = mongoose.Schema({
         required: true,
         ref: 'User'
     },
+    academy: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false, // Optional for now to support legacy tournaments
+        ref: 'Academy'
+    },
     title: {
         type: String,
         required: [true, 'Please add a tournament title']
@@ -22,6 +27,12 @@ const tournamentSchema = mongoose.Schema({
         type: String,
         required: false
     },
+    startDate: {
+        type: Date
+    },
+    endDate: {
+        type: Date
+    },
     status: {
         type: String,
         enum: ['Draft', 'Active', 'Completed'],
@@ -35,4 +46,10 @@ const tournamentSchema = mongoose.Schema({
     timestamps: true
 });
 
-module.exports = mongoose.models.Tournament || mongoose.model('Tournament', tournamentSchema);
+// Force re-compilation of the model to ensure new fields (startDate, endDate) are picked up
+// This fixes the issue where Next.js caches the old schema
+if (mongoose.models.Tournament) {
+    delete mongoose.models.Tournament;
+}
+
+module.exports = mongoose.model('Tournament', tournamentSchema);

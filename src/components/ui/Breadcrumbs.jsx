@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import useTournamentStore from '@/store/useTournamentStore';
 
 const Breadcrumbs = ({ className = "" }) => {
     const pathname = usePathname();
@@ -32,14 +33,18 @@ const Breadcrumbs = ({ className = "" }) => {
     };
 
     // Generate breadcrumb items
-    const breadcrumbs = pathSegments.map((segment, index) => {
+    let breadcrumbs = pathSegments.map((segment, index) => {
         // Construct the URL up to this segment
-        const href = `/${pathSegments.slice(0, index + 1).join('/')}`;
+        let href = `/${pathSegments.slice(0, index + 1).join('/')}`;
         
         // Use mapping or capitalize the segment
-        // If it looks like an ID (long alphanumeric), shorten it or try to keep it general if possible, 
-        // but for now, we'll just show 'Details' if it's a long MongoID-like string
         let label = pathNameMapping[segment] || segment;
+        
+        // Fix for public 'tournaments' route 404 - redirect to the actual list page 'tournamentdetails'
+        // But ONLY if we are not in dashboard (since /dashboard/tournaments is valid)
+        if (segment === 'tournaments' && !pathname.startsWith('/dashboard')) {
+            href = '/tournamentdetails';
+        }
         
         if (segment.length > 20 && !pathNameMapping[segment]) {
             label = 'Details';
@@ -51,9 +56,42 @@ const Breadcrumbs = ({ className = "" }) => {
         return {
             label,
             href,
-            isLast: index === pathSegments.length - 1
+            isLast: index === pathSegments.length - 1,
+            originalSegment: segment
         };
     });
+
+    // CUSTOM LOGIC: Inject Academy into breadcrumbs if viewing a tournament
+    // This is a "Smart" Breadcrumb feature for this specific app requirement
+    const { activeTournament } = useTournamentStore();
+    
+    // Check if we are on a tournament details page
+    if (pathSegments.includes('tournaments') && pathSegments.length > 2 && activeTournament && activeTournament.academy) {
+        const tournamentIndex = breadcrumbs.findIndex(b => b.originalSegment === 'tournaments');
+        if (tournamentIndex !== -1) {
+             const academyCrumb = {
+                label: activeTournament.academy.name || 'Academy',
+                href: `/dashboard/academies/${activeTournament.academy._id || activeTournament.academy}`,
+                isLast: false
+             };
+             
+             // Check if already there to avoid dupes (unlikely with this logic but good practice)
+             // We insert Academy BEFORE "Tournaments" per user request "dashboard - mm academy - tournaments"
+             // Wait, user said: "dashboard - mm accadamy - tournaments - tournament"
+             
+             // Current: Dashboard > Tournaments > [ID]
+             // Desired: Dashboard > [Academy] > Tournaments > [ID] or [Title]
+             
+             // So insert at tournamentIndex
+             breadcrumbs.splice(tournamentIndex, 0, academyCrumb);
+        }
+        
+        // Also replace the generic "Details" or ID with the Tournament Title
+        const lastCrumb = breadcrumbs[breadcrumbs.length - 1];
+        if (lastCrumb && activeTournament.title) {
+            lastCrumb.label = activeTournament.title;
+        }
+    }
 
     // Don't render on home page (pathSegments length is 0)
     if (pathSegments.length === 0) return null;

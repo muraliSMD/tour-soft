@@ -10,7 +10,7 @@ import '@/models/User';
 
 export async function GET(req, { params }) {
     try {
-        const user = await protect(req);
+        // Public endpoint for live scores
         await connectDB();
         
         const { id } = await params;

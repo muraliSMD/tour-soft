@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Card from '@/components/ui/Card';
+import Loader from '@/components/ui/Loader';
 import useAuthStore from '@/store/useAuthStore';
 
 export default function LoginPage() {
@@ -95,7 +96,7 @@ export default function LoginPage() {
         </div>
 
         <Button className="w-full mt-2" disabled={isLoading}>
-            {isLoading ? 'Signing In...' : 'Sign In'}
+            {isLoading ? <Loader size="small" /> : 'Sign In'}
         </Button>
       </form>
 

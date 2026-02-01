@@ -11,7 +11,12 @@ export async function GET(req) {
         requireAdmin(user);
         await connectDB();
 
-        const users = await User.find({}).select('-password');
+        let query = {};
+        if (user.role !== 'owner') {
+            query.role = { $ne: 'owner' };
+        }
+
+        const users = await User.find(query).select('-password');
         return NextResponse.json(users);
     } catch (error) {
         console.error('Error fetching users:', error);

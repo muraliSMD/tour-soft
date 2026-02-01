@@ -40,7 +40,8 @@ const useTournamentStore = create((set) => ({
         set({ isLoading: true, isError: false });
         try {
             const response = await api.get(`/tournaments/${id}`);
-            set({ activeTournament: response.data, isLoading: false, isSuccess: true });
+            const tournamentData = response.data.success ? response.data.data : response.data;
+            set({ activeTournament: tournamentData, isLoading: false, isSuccess: true });
         } catch (error) {
             const message = error.response?.data?.message || error.message;
             set({ isError: true, message, isLoading: false });
@@ -51,13 +52,14 @@ const useTournamentStore = create((set) => ({
         set({ isLoading: true, isError: false });
         try {
             const response = await api.put(`/tournaments/${id}`, data);
+            const updatedTournament = response.data.success ? response.data.data : response.data;
             set((state) => ({
-                activeTournament: response.data,
-                tournaments: state.tournaments.map(t => t._id === id ? response.data : t),
+                activeTournament: updatedTournament,
+                tournaments: state.tournaments.map(t => t._id === id ? updatedTournament : t),
                 isLoading: false,
                 isSuccess: true
             }));
-            return response.data;
+            return updatedTournament;
         } catch (error) {
             const message = error.response?.data?.message || error.message;
             set({ isError: true, message, isLoading: false });

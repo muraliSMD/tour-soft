@@ -26,10 +26,16 @@ const TournamentRegistrationPage = () => {
         const fetchTournament = async () => {
             try {
                 const response = await api.get(`/tournaments/${params.id}`);
-                setTournament(response.data);
+                const tournamentData = response.data.success ? response.data.data : response.data;
+                
+                if (!tournamentData) {
+                    throw new Error('Tournament data missing');
+                }
+
+                setTournament(tournamentData);
                 
                 // Attempt to detect format from tournament data
-                if (response.data.format && response.data.format.toLowerCase().includes('double')) {
+                if (tournamentData.format && tournamentData.format.toLowerCase().includes('double')) {
                     setFormat('Double');
                 } else {
                     setFormat('Single');

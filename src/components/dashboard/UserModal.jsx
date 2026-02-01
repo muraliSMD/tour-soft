@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { X, Eye, EyeOff } from 'lucide-react';
 
 const UserModal = ({ isOpen, onClose, onSave, user, currentUserRole }) => {
     const [formData, setFormData] = useState({
@@ -15,6 +15,7 @@ const UserModal = ({ isOpen, onClose, onSave, user, currentUserRole }) => {
         state: '',
         country: 'India' // Default
     });
+    const [showPassword, setShowPassword] = useState(false);
 
     // Simple option lists for demo
     const countries = ["India", "USA", "UK", "Canada", "Australia"];
@@ -191,15 +192,24 @@ const UserModal = ({ isOpen, onClose, onSave, user, currentUserRole }) => {
                         <label className="block text-sm font-medium text-text-muted mb-1">
                             {user ? 'New Password (leave blank to keep current)' : 'Password'}
                         </label>
-                        <input
-                            type="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            className="w-full bg-background border border-white/10 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-primary/50 transition-colors"
-                            placeholder={user ? "********" : "Enter password"}
-                            required={!user}
-                        />
+                        <div className="relative">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                className="w-full bg-background border border-white/10 rounded-lg px-4 py-2 pr-10 text-white focus:outline-none focus:border-primary/50 transition-colors"
+                                placeholder={user ? "********" : "Enter password"}
+                                required={!user}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-white"
+                            >
+                                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                            </button>
+                        </div>
                     </div>
 
                     <div>
@@ -213,8 +223,7 @@ const UserModal = ({ isOpen, onClose, onSave, user, currentUserRole }) => {
                             {/* Admin sees Referee first, and Player. Owner sees all. */}
                             {currentUserRole === 'admin' ? (
                                 <>
-                                    <option value="referee">Referee</option>
-                                    <option value="player">Player</option>
+                                    <option value="referee">Referee (Internal User)</option>
                                 </>
                             ) : (
                                 <>

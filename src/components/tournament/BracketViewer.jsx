@@ -153,12 +153,31 @@ const BracketViewer = ({ matches = [], format }) => {
         return <GroupStageViewer matches={matches} />;
     }
 
-    // Default Knockout View
+    // Default Knockout View with Grouping
+    const rounds = matches.reduce((acc, match) => {
+        // Use 'group' (Round Name) if available, otherwise 'Round X', otherwise 'Unassigned'
+        const roundName = match.group || (match.round ? `Round ${match.round}` : 'Unassigned');
+        if (!acc[roundName]) acc[roundName] = [];
+        acc[roundName].push(match);
+        return acc;
+    }, {});
+
+    const sortedRounds = Object.keys(rounds); // manual text might not sort well, but better than nothing
+
     return (
         <div className="overflow-x-auto pb-8">
-            <div className="flex flex-wrap gap-8 justify-center">
-                {matches.map((match) => (
-                    <MatchNode key={match._id} match={match} />
+            <div className="flex gap-12 min-w-max p-4">
+                {sortedRounds.map(roundName => (
+                    <div key={roundName} className="flex flex-col gap-6">
+                        <h3 className="text-lg font-bold text-white text-center border-b border-white/10 pb-2 mb-2">
+                            {roundName}
+                        </h3>
+                        <div className="flex flex-col gap-6 justify-center h-full">
+                            {rounds[roundName].map((match) => (
+                                <MatchNode key={match._id} match={match} />
+                            ))}
+                        </div>
+                    </div>
                 ))}
             </div>
         </div>

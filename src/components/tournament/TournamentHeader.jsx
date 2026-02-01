@@ -20,17 +20,27 @@ const TournamentHeader = ({ tournamentId, title, status, game, event }) => {
     const [isResetConfirmOpen, setIsResetConfirmOpen] = React.useState(false);
     const [isCompleteConfirmOpen, setIsCompleteConfirmOpen] = React.useState(false);
 
-    const alTabs = [
-        { name: 'Overview', href: baseUrl, roles: ['owner', 'admin'] },
-        { name: 'Teams', href: `${baseUrl}/registrations`, roles: ['owner', 'admin'] },
-        { name: 'Matches', href: `${baseUrl}/matches`, roles: ['owner', 'admin', 'referee'] },
-        { name: 'Brackets', href: `${baseUrl}/brackets`, roles: ['owner', 'admin', 'referee'] },
-        { name: 'Settings', href: `${baseUrl}/settings`, roles: ['owner', 'admin'] },
+    const canManage = user?.role === 'owner' || user?.role === 'admin';
+    const isReferee = user?.role === 'referee';
+
+    const tabs = [
+        { name: 'Overview', href: baseUrl },
+        { name: 'Matches', href: `${baseUrl}/matches` },
+        // Referees only see Overview and Matches
+        ...(!isReferee ? [
+             { name: 'Profile', href: `${baseUrl}/profile` }, // Add Profile back if needed, or remove
+             { name: 'Teams', href: `${baseUrl}/registrations` },
+             { name: 'Brackets', href: `${baseUrl}/brackets` },
+             { name: 'Settings', href: `${baseUrl}/settings` }
+        ] : [])
     ];
 
-    const tabs = alTabs.filter(tab => tab.roles.includes(user?.role || ''));
-
-    const isActive = (path) => pathname === path;
+    const isActive = (path) => {
+        if (path === baseUrl) {
+            return pathname === path;
+        }
+        return pathname.startsWith(path);
+    };
 
     const handleConfirmStart = async () => {
         try {
