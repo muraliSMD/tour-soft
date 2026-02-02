@@ -96,7 +96,7 @@ export default function CreateTournamentPage() {
   return (
     <div className="max-w-3xl mx-auto">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-white">Create Tournament</h1>
+        <h1 className="text-xl sm:text-3xl font-bold text-white">Create Tournament</h1>
         <p className="text-text-muted mt-2">Set up your new league or cup event.</p>
         
         {preSelectedAcademyId && (

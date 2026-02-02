@@ -81,7 +81,7 @@ export default function DashboardPage() {
         return (
             <div className="space-y-8">
                  <div>
-                    <h1 className="text-2xl font-bold text-white">Referee Dashboard</h1>
+                    <h1 className="text-xl sm:text-2xl font-bold text-white">Referee Dashboard</h1>
                     <p className="text-text-muted">Welcome back, {user?.name}. Here are your assigned tournaments.</p>
                 </div>
                 
@@ -145,7 +145,7 @@ export default function DashboardPage() {
             <div className="space-y-8">
                 <div className="flex justify-between items-center">
                      <div>
-                        <h1 className="text-2xl font-bold text-white">{user.role === 'owner' ? 'Owner' : 'Admin'} Dashboard</h1>
+                        <h1 className="text-xl sm:text-2xl font-bold text-white">{user.role === 'owner' ? 'Owner' : 'Admin'} Dashboard</h1>
                         <p className="text-text-muted">Manage your Academies</p>
                      </div>
                      {user.role === 'owner' && (
@@ -219,7 +219,7 @@ export default function DashboardPage() {
             {/* Header / Stats */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-white">Dashboard</h1>
+                    <h1 className="text-xl sm:text-2xl font-bold text-white">Dashboard</h1>
                     <p className="text-text-muted">
                         Welcome back, {user?.name || 'organizer'}.
                         {user?.role === 'admin' && user?.sports?.length > 0 && (
@@ -236,7 +236,7 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <Card className="p-6">
                     <div className="text-text-muted text-sm font-medium mb-1">Active Tournaments</div>
-                    <div className="text-3xl font-bold text-white">{stats.activeTournaments}</div>
+                    <div className="text-2xl sm:text-3xl font-bold text-white">{stats.activeTournaments}</div>
                 </Card>
                 <Card className="p-6">
                     <div className="text-text-muted text-sm font-medium mb-1">Total Matches</div>

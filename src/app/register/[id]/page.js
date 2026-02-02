@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Loader from '@/components/ui/Loader';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import useAuthStore from '@/store/useAuthStore';
@@ -174,7 +175,7 @@ export default function PublicRegistrationPage() {
     };
 
     if (loading) {
-        return <div className="min-h-screen flex items-center justify-center bg-background text-white">Loading...</div>;
+        return <Loader fullScreen text="Loading Registration details..." />;
     }
 
     if (error && !tournament) {
@@ -229,7 +230,7 @@ export default function PublicRegistrationPage() {
         <div className="min-h-screen bg-background py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-xl mx-auto">
                 <div className="text-center mb-10">
-                    <h1 className="text-3xl font-bold text-white mb-2">{tournament.title}</h1>
+                    <h1 className="text-xl sm:text-3xl font-bold text-white mb-2">{tournament.title}</h1>
                     <div className="flex items-center justify-center gap-4 text-text-muted text-sm">
                         <span>{tournament.startDate ? new Date(tournament.startDate).toLocaleDateString() : 'Date TBA'}</span>
                         <span>•</span>

@@ -4,6 +4,7 @@ import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Save, Loader2, Trash2, Plus } from 'lucide-react';
 import Link from 'next/link';
+import Loader from '@/components/ui/Loader';
 import DeleteConfirmationModal from '@/components/ui/DeleteConfirmationModal';
 import useAuthStore from '@/store/useAuthStore';
 import api from '@/lib/axios';
@@ -41,7 +42,7 @@ function ImageUploader({ label, value, onChange, onRemove }) {
     return (
         <div>
             <label className="block text-sm font-medium text-text-muted mb-1">{label}</label>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center gap-4">
                 {value ? (
                     <div className="relative group">
                         <img src={value} alt="Preview" className="w-24 h-24 object-cover rounded-lg border border-white/10" />
@@ -58,7 +59,7 @@ function ImageUploader({ label, value, onChange, onRemove }) {
                          {uploading ? <Loader2 className="w-6 h-6 animate-spin text-text-muted" /> : <span className="text-xs text-text-muted">No Image</span>}
                     </div>
                 )}
-                <div className="flex-1">
+                <div className="flex-1 w-full sm:w-auto">
                      <input
                         type="file"
                         accept="image/*"
@@ -69,6 +70,7 @@ function ImageUploader({ label, value, onChange, onRemove }) {
                           file:text-sm file:font-semibold
                           file:bg-primary file:text-white
                           hover:file:bg-primary/90
+                          w-full sm:max-w-xs
                         "
                         disabled={uploading}
                       />
@@ -184,7 +186,7 @@ export default function AcademySettingsPage({ params }) {
         }
     };
 
-    if (loading) return <div className="p-8 text-center text-white">Loading...</div>;
+    if (loading) return <Loader fullScreen text="Loading Academy Settings..." />;
 
     return (
         <div className="max-w-3xl mx-auto space-y-6">
@@ -411,17 +413,17 @@ export default function AcademySettingsPage({ params }) {
                         </div>
                     </div>
 
-                    <div className="pt-4 flex justify-end gap-3">
+                    <div className="pt-8 flex flex-col sm:flex-row justify-end gap-3 border-t border-white/5">
                         <Link 
                             href="/dashboard/academies"
-                            className="bg-transparent hover:bg-white/5 text-text-muted hover:text-white px-6 py-2 rounded-lg font-medium transition"
+                            className="w-full sm:w-auto text-center bg-transparent hover:bg-white/5 text-text-muted hover:text-white px-6 py-2.5 rounded-lg font-medium transition border border-white/5 sm:border-transparent"
                         >
                             Cancel
                         </Link>
                         <button
                             type="submit"
                             disabled={saving}
-                            className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-lg font-medium transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white px-6 py-2.5 rounded-lg font-medium transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-500/20"
                         >
                             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                             Save Changes
@@ -431,15 +433,15 @@ export default function AcademySettingsPage({ params }) {
 
                 {user?.role === 'owner' && (
                     <div className="mt-12 pt-8 border-t border-red-500/20">
-                        <h3 className="text-lg font-bold text-red-500 mb-2">Danger Zone</h3>
-                        <div className="flex items-center justify-between p-4 border border-red-500/20 rounded-xl bg-red-500/5">
+                        <h3 className="text-lg font-bold text-red-500 mb-4">Danger Zone</h3>
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 border border-red-500/20 rounded-xl bg-red-500/5">
                             <div>
-                                <div className="font-medium text-white">Delete Academy</div>
-                                <div className="text-sm text-text-muted">This action cannot be undone. All tournaments and matches will be lost.</div>
+                                <div className="font-semibold text-white">Delete Academy</div>
+                                <div className="text-sm text-text-muted mt-1">This action cannot be undone. All tournaments and matches will be lost.</div>
                             </div>
                             <button 
                                 onClick={() => setDeleteModalOpen(true)}
-                                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition"
+                                className="w-full sm:w-auto px-6 py-2.5 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-bold transition shadow-lg shadow-red-500/20"
                             >
                                 Delete Academy
                             </button>

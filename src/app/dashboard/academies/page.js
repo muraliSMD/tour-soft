@@ -38,12 +38,12 @@ export default function MyAcademiesPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold text-white">My Academies</h1>
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <h1 className="text-xl sm:text-2xl font-bold text-white">My Academies</h1>
                 {user?.role === 'owner' && (
                     <Link 
                         href="/dashboard/academies/create"
-                        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg transition"
+                        className="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-lg transition font-bold shadow-lg shadow-blue-600/20"
                     >
                         <Plus className="w-4 h-4" />
                         Create Academy
@@ -53,7 +53,7 @@ export default function MyAcademiesPage() {
 
             {academies.length === 0 ? (
                 <div className="bg-surface rounded-xl p-12 text-center border border-white/5">
-                    <h3 className="text-xl font-medium text-white mb-2">No Academies Yet</h3>
+                    <h3 className="text-lg sm:text-xl font-medium text-white mb-2">No Academies Yet</h3>
                     <p className="text-text-muted mb-6">
                         {user?.role === 'owner' 
                             ? "Create your first academy to start managing tournaments." 
@@ -78,7 +78,7 @@ export default function MyAcademiesPage() {
                                 )}
                             </div>
                             <div className="p-6">
-                                <h3 className="text-xl font-bold text-white mb-2">{academy.name}</h3>
+                                <h3 className="text-lg sm:text-xl font-bold text-white mb-2">{academy.name}</h3>
                                 <div className="text-sm text-text-muted mb-4">
                                     {academy.location?.city || 'No Location'}
                                 </div>

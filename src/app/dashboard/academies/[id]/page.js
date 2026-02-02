@@ -58,22 +58,22 @@ export default function AcademyOverviewPage({ params }) {
     return (
         <div className="space-y-8">
             {/* Header / Banner */}
-            <div className="relative h-48 rounded-2xl overflow-hidden bg-surface border border-white/5">
+            <div className="relative min-h-[10rem] sm:h-48 rounded-2xl overflow-hidden bg-surface border border-white/5 shadow-inner">
                 {academy.bannerImage ? (
                     <img src={academy.bannerImage} className="w-full h-full object-cover" alt="Banner" />
                 ) : (
                     <div className="w-full h-full bg-gradient-to-r from-blue-900 to-slate-900 flex items-center justify-center">
-                        <h1 className="text-4xl font-bold text-white/10">{academy.name}</h1>
+                        <h1 className="text-2xl sm:text-4xl font-bold text-white/10">{academy.name}</h1>
                     </div>
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-6">
-                    <div className="flex items-center gap-4">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex items-end p-4 sm:p-6">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 w-full">
                          {academy.logo && (
-                             <img src={academy.logo} className="w-16 h-16 rounded-xl border-2 border-white/20 bg-surface object-cover" alt="Logo" />
+                             <img src={academy.logo} className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl border-2 border-white/20 bg-surface object-cover shadow-xl" alt="Logo" />
                          )}
-                         <div>
-                             <h1 className="text-2xl font-bold text-white leading-tight">{academy.name}</h1>
-                             <p className="text-white/60 text-sm">{academy.location?.city || 'No Location'} • {academy.sports?.join(', ') || 'Sports Academy'}</p>
+                         <div className="flex-1">
+                             <h1 className="text-xl sm:text-2xl font-bold text-white leading-tight drop-shadow-md">{academy.name}</h1>
+                             <p className="text-white/80 text-xs sm:text-sm font-medium">{academy.location?.city || 'No Location'} • {academy.sports?.join(', ') || 'Sports Academy'}</p>
                          </div>
                     </div>
                 </div>
@@ -97,30 +97,30 @@ export default function AcademyOverviewPage({ params }) {
             </div>
 
             {/* Detailed Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="bg-surface rounded-xl border border-white/5 p-6">
-                    <div className="text-text-muted text-sm font-medium mb-1 flex items-center gap-2">
-                        <Activity className="w-4 h-4 text-green-500" /> Active Tournaments
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                <div className="bg-surface rounded-xl border border-white/5 p-4 sm:p-6 shadow-sm">
+                    <div className="text-text-muted text-[10px] sm:text-sm font-medium mb-1 flex items-center gap-2">
+                        <Activity className="w-3 h-3 sm:w-4 sm:h-4 text-green-500" /> <span className="truncate">Active Tournaments</span>
                     </div>
-                    <div className="text-3xl font-bold text-white">{activeTournaments}</div>
+                    <div className="text-2xl sm:text-3xl font-bold text-white">{activeTournaments}</div>
                 </div>
-                <div className="bg-surface rounded-xl border border-white/5 p-6">
-                    <div className="text-text-muted text-sm font-medium mb-1 flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-blue-500" /> Upcoming
+                <div className="bg-surface rounded-xl border border-white/5 p-4 sm:p-6 shadow-sm">
+                    <div className="text-text-muted text-[10px] sm:text-sm font-medium mb-1 flex items-center gap-2">
+                        <Calendar className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500" /> <span className="truncate">Upcoming</span>
                     </div>
-                    <div className="text-3xl font-bold text-white">{upcomingTournaments}</div>
+                    <div className="text-2xl sm:text-3xl font-bold text-white">{upcomingTournaments}</div>
                 </div>
-                 <div className="bg-surface rounded-xl border border-white/5 p-6">
-                    <div className="text-text-muted text-sm font-medium mb-1 flex items-center gap-2">
-                        <PlayCircle className="w-4 h-4 text-orange-500" /> Total Matches
+                 <div className="bg-surface rounded-xl border border-white/5 p-4 sm:p-6 shadow-sm">
+                    <div className="text-text-muted text-[10px] sm:text-sm font-medium mb-1 flex items-center gap-2">
+                        <PlayCircle className="w-3 h-3 sm:w-4 sm:h-4 text-orange-500" /> <span className="truncate">Total Matches</span>
                     </div>
-                    <div className="text-3xl font-bold text-white">{totalMatches}</div>
+                    <div className="text-2xl sm:text-3xl font-bold text-white">{totalMatches}</div>
                 </div>
-                 <div className="bg-surface rounded-xl border border-white/5 p-6">
-                    <div className="text-text-muted text-sm font-medium mb-1 flex items-center gap-2">
-                        <Trophy className="w-4 h-4 text-yellow-500" /> Completed Matches
+                 <div className="bg-surface rounded-xl border border-white/5 p-4 sm:p-6 shadow-sm">
+                    <div className="text-text-muted text-[10px] sm:text-sm font-medium mb-1 flex items-center gap-2">
+                        <Trophy className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-500" /> <span className="truncate">Completed</span>
                     </div>
-                    <div className="text-3xl font-bold text-white">{completedMatches}</div>
+                    <div className="text-2xl sm:text-3xl font-bold text-white">{completedMatches}</div>
                 </div>
             </div>
 
@@ -138,7 +138,7 @@ export default function AcademyOverviewPage({ params }) {
                             <Link key={t._id} href={`/dashboard/tournaments/${t._id}`} className="block p-4 hover:bg-white/5 transition">
                                 <div className="flex justify-between items-center">
                                     <div>
-                                        <div className="font-medium text-white">{t.title}</div>
+                                        <div className="font-medium text-white line-clamp-1">{t.title}</div>
                                         <div className="text-sm text-text-muted">{t.game} • {t.format} • {new Date(t.startDate).toLocaleDateString()}</div>
                                     </div>
                                     <span className={`px-2.5 py-0.5 text-xs rounded-full font-medium ${

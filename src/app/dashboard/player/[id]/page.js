@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import Card from '@/components/ui/Card';
+import Loader from '@/components/ui/Loader';
 import Button from '@/components/ui/Button';
 import useAuthStore from '@/store/useAuthStore';
 
@@ -54,7 +55,7 @@ export default function PlayerTournamentDetailsPage() {
         }
     }, [params.id, user]);
 
-    if (loading) return <div className="text-center text-white py-10">Loading...</div>;
+    if (loading) return <Loader text="Loading tournament info..." />;
     if (!tournament) return <div className="text-center text-white py-10">Tournament not found</div>;
 
     // Filter matches for my team

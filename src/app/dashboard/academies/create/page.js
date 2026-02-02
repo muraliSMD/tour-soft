@@ -62,11 +62,11 @@ export default function CreateAcademyPage() {
 
     return (
         <div className="max-w-3xl mx-auto space-y-6">
-            <div className="flex items-center gap-4">
-                 <Link href="/dashboard/academies" className="p-2 hover:bg-white/5 rounded-full transition text-text-muted hover:text-white">
+            <div className="flex items-center gap-3">
+                 <Link href="/dashboard/academies" className="p-2 hover:bg-white/5 rounded-full transition text-text-muted hover:text-white flex-shrink-0">
                     <ArrowLeft className="w-5 h-5" />
                  </Link>
-                 <h1 className="text-2xl font-bold text-white">Create New Academy</h1>
+                 <h1 className="text-xl sm:text-2xl font-bold text-white truncate">Create New Academy</h1>
             </div>
 
             <div className="bg-surface rounded-xl border border-white/5 p-6">
@@ -160,11 +160,17 @@ export default function CreateAcademyPage() {
 
 {/* Sports selection removed as per requirement - defaulting to Badminton */}
 
-                    <div className="pt-4 flex justify-end">
+                    <div className="pt-6 flex flex-col sm:flex-row justify-end gap-3 border-t border-white/5">
+                        <Link 
+                            href="/dashboard/academies"
+                            className="w-full sm:w-auto text-center px-6 py-2.5 rounded-lg font-bold text-text-muted hover:text-white hover:bg-white/5 transition border border-white/5 sm:border-transparent"
+                        >
+                            Cancel
+                        </Link>
                         <button
                             type="submit"
                             disabled={loading}
-                            className="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-lg font-medium transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white px-8 py-2.5 rounded-lg font-bold transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-blue-600/20"
                         >
                             {loading ? <Loader size="small" /> : <Save className="w-4 h-4" />}
                             Create Academy

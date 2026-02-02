@@ -12,7 +12,7 @@ export default function AboutPage() {
 
         {/* Hero */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-white mb-6">
             Empowering Sports Communities
           </h1>
           <p className="text-xl text-text-muted leading-relaxed">
