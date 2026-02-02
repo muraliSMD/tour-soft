@@ -76,7 +76,7 @@ export default function AcademyTeamPage({ params }) {
         }
     };
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <Loader fullScreen text="Loading Team Members..." />;
 
     return (
         <div className="max-w-3xl mx-auto space-y-8">

@@ -84,7 +84,7 @@ const TournamentHeader = ({ tournamentId, title, status, game, event }) => {
                         </span>
                         <span className="text-text-muted text-sm">{game} {event && `- ${event}`}</span>
                     </div>
-                    <h1 className="text-3xl font-bold text-white">{title}</h1>
+                    <h1 className="text-xl sm:text-3xl font-bold text-white">{title}</h1>
                 </div>
                 {user?.role !== 'referee' && (
                     <div className="flex flex-wrap items-center gap-2 sm:gap-3">

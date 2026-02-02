@@ -4,6 +4,7 @@ import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Save, Loader2, Trash2, Plus } from 'lucide-react';
 import Link from 'next/link';
+import Loader from '@/components/ui/Loader';
 import DeleteConfirmationModal from '@/components/ui/DeleteConfirmationModal';
 import useAuthStore from '@/store/useAuthStore';
 import api from '@/lib/axios';
@@ -185,7 +186,7 @@ export default function AcademySettingsPage({ params }) {
         }
     };
 
-    if (loading) return <div className="p-8 text-center text-white">Loading...</div>;
+    if (loading) return <Loader fullScreen text="Loading Academy Settings..." />;
 
     return (
         <div className="max-w-3xl mx-auto space-y-6">

@@ -63,7 +63,7 @@ export default function AcademyOverviewPage({ params }) {
                     <img src={academy.bannerImage} className="w-full h-full object-cover" alt="Banner" />
                 ) : (
                     <div className="w-full h-full bg-gradient-to-r from-blue-900 to-slate-900 flex items-center justify-center">
-                        <h1 className="text-4xl font-bold text-white/10">{academy.name}</h1>
+                        <h1 className="text-2xl sm:text-4xl font-bold text-white/10">{academy.name}</h1>
                     </div>
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex items-end p-4 sm:p-6">
@@ -138,7 +138,7 @@ export default function AcademyOverviewPage({ params }) {
                             <Link key={t._id} href={`/dashboard/tournaments/${t._id}`} className="block p-4 hover:bg-white/5 transition">
                                 <div className="flex justify-between items-center">
                                     <div>
-                                        <div className="font-medium text-white">{t.title}</div>
+                                        <div className="font-medium text-white line-clamp-1">{t.title}</div>
                                         <div className="text-sm text-text-muted">{t.game} • {t.format} • {new Date(t.startDate).toLocaleDateString()}</div>
                                     </div>
                                     <span className={`px-2.5 py-0.5 text-xs rounded-full font-medium ${

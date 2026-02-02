@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
+import Loader from '@/components/ui/Loader';
 import DeleteConfirmationModal from '@/components/ui/DeleteConfirmationModal';
 import api from '@/lib/axios';
 import { useParams } from 'next/navigation';
@@ -237,7 +238,11 @@ export default function ParticipantsPage() {
                         </thead>
                         <tbody className="divide-y divide-white/5">
                             {isLoading ? (
-                                <tr><td colSpan="5" className="p-4 text-center text-text-muted">Loading...</td></tr>
+                                <tr>
+                                    <td colSpan="5" className="p-8">
+                                        <Loader text="Loading teams..." />
+                                    </td>
+                                </tr>
                             ) : participants.length === 0 ? (
                                 <tr><td colSpan="5" className="p-4 text-center text-text-muted">No teams registered yet.</td></tr>
                             ) : (

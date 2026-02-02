@@ -41,7 +41,7 @@ export default function DashboardLayout({ children }) {
     if (!user) return null; // Prevent flash of content
 
     return (
-        <div className="min-h-screen bg-background text-text-main flex">
+        <div className="min-h-screen bg-background text-text-main flex overflow-x-hidden">
             {/* Sidebar */}
             <Sidebar isOpen={isSidebarOpen} />
             
@@ -54,7 +54,7 @@ export default function DashboardLayout({ children }) {
             )}
 
             {/* Main Content Wrapper */}
-            <div className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ${isSidebarOpen ? 'md:pl-64' : 'md:pl-20'}`}>
+            <div className={`flex-1 flex flex-col min-h-screen transition-all duration-300 min-w-0 ${isSidebarOpen ? 'md:pl-64' : 'md:pl-20'}`}>
                 
                 {/* Topbar */}
                 <Topbar 

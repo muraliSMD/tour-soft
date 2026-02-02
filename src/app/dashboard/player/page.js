@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Card from '@/components/ui/Card';
+import Loader from '@/components/ui/Loader';
 import Button from '@/components/ui/Button';
 
 export default function PlayerDashboardPage() {
@@ -32,7 +33,7 @@ export default function PlayerDashboardPage() {
         }
     };
 
-    if (isLoading) return <div className="text-white text-center py-10">Loading...</div>;
+    if (isLoading) return <Loader text="Loading your tournaments..." />;
 
     return (
         <div className="space-y-6">

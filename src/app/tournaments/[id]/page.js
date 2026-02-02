@@ -89,7 +89,7 @@ export default function PublicTournamentPage() {
                 {/* Header */}
                 <div className="bg-surface border border-white/5 rounded-2xl p-8 text-center relative overflow-hidden">
                     <div className="relative z-10">
-                        <h1 className="text-4xl font-bold text-white mb-4">{tournament.title}</h1>
+                        <h1 className="text-2xl sm:text-4xl font-bold text-white mb-4">{tournament.title}</h1>
                         <div className="flex justify-center gap-4 text-text-muted mb-6">
                             <span>{tournament.game}</span>
                             <span>•</span>

@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import Loader from '@/components/ui/Loader';
 import Card from '@/components/ui/Card';
 import useTournamentStore from '@/store/useTournamentStore';
 
@@ -8,7 +9,7 @@ export default function TournamentOverviewPage() {
     const { activeTournament } = useTournamentStore();
 
     if (!activeTournament) {
-        return <div className="text-white text-center py-10">Loading...</div>;
+        return <Loader text="Loading Tournament Details..." />;
     }
 
     return (

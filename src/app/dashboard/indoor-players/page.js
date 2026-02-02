@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Card from '@/components/ui/Card';
+import Loader from '@/components/ui/Loader';
 import Button from '@/components/ui/Button';
 import useMemberStore from '@/store/useMemberStore';
 import Link from 'next/link';
@@ -62,7 +63,7 @@ export default function IndoorPlayersPage() {
             </Card>
 
             <div className="grid gap-4">
-                {loading && <p className="text-white">Loading...</p>}
+                {loading && <Loader text="Loading players..." />}
                 {!loading && filteredMembers.length === 0 && <p className="text-text-muted">No members found.</p>}
                 
                 {filteredMembers.map(member => (

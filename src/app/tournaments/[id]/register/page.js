@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Loader from '@/components/ui/Loader';
 import api from '@/lib/axios';
 import useAuthStore from '@/store/useAuthStore';
 import Card from '@/components/ui/Card';
@@ -93,7 +94,7 @@ const TournamentRegistrationPage = () => {
         }
     };
 
-    if (loading || authLoading) return <div className="min-h-screen bg-background flex items-center justify-center text-white">Loading...</div>;
+    if (loading || authLoading) return <Loader fullScreen text="Preparing Registration..." />;
     
     if (error) return (
         <div className="min-h-screen bg-background flex items-center justify-center p-4">

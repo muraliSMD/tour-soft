@@ -23,14 +23,14 @@ export default function Home() {
             v1.0 Now Live
           </div>
           
-          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-white mb-6 leading-tight">
+          <h1 className="text-3xl sm:text-5xl md:text-7xl font-extrabold tracking-tight text-white mb-6 leading-tight">
             The Future of <br className="hidden md:block" />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-purple-500 to-secondary">
               Tournament Management
             </span>
           </h1>
           
-          <p className="max-w-2xl mx-auto text-xl text-text-muted mb-10 leading-relaxed">
+          <p className="max-w-2xl mx-auto text-lg sm:text-xl text-text-muted mb-10 leading-relaxed px-4">
             Powering esports and traditional sports with a professional-grade platform. 
             Create, manage, and broadcast your tournaments with ease.
           </p>
