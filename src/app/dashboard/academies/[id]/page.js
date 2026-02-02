@@ -58,7 +58,7 @@ export default function AcademyOverviewPage({ params }) {
     return (
         <div className="space-y-8">
             {/* Header / Banner */}
-            <div className="relative h-48 rounded-2xl overflow-hidden bg-surface border border-white/5">
+            <div className="relative min-h-[10rem] sm:h-48 rounded-2xl overflow-hidden bg-surface border border-white/5 shadow-inner">
                 {academy.bannerImage ? (
                     <img src={academy.bannerImage} className="w-full h-full object-cover" alt="Banner" />
                 ) : (

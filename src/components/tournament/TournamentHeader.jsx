@@ -145,21 +145,23 @@ const TournamentHeader = ({ tournamentId, title, status, game, event }) => {
                 )}
             </div>
 
-            <div className="flex items-center gap-6 overflow-x-auto no-scrollbar -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
-                {tabs.map((tab) => (
-                    <Link 
-                        key={tab.name} 
-                        href={tab.href}
-                        className={`
-                            pb-4 text-sm font-bold border-b-2 transition-all whitespace-nowrap
-                            ${isActive(tab.href) 
-                                ? 'border-primary text-white' 
-                                : 'border-transparent text-text-muted hover:text-white hover:border-white/10'}
-                        `}
-                    >
-                        {tab.name}
-                    </Link>
-                ))}
+            <div className="relative border-b border-white/5 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 overflow-hidden">
+                <div className="flex items-center gap-6 overflow-x-auto no-scrollbar -mb-px">
+                    {tabs.map((tab) => (
+                        <Link 
+                            key={tab.name} 
+                            href={tab.href}
+                            className={`
+                                pb-4 text-sm font-bold border-b-2 transition-all whitespace-nowrap flex-shrink-0
+                                ${isActive(tab.href) 
+                                    ? 'border-primary text-white' 
+                                    : 'border-transparent text-text-muted hover:text-white hover:border-white/10'}
+                            `}
+                        >
+                            {tab.name}
+                        </Link>
+                    ))}
+                </div>
             </div>
 
 

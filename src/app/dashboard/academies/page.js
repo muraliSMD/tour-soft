@@ -38,12 +38,12 @@ export default function MyAcademiesPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h1 className="text-2xl font-bold text-white">My Academies</h1>
                 {user?.role === 'owner' && (
                     <Link 
                         href="/dashboard/academies/create"
-                        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg transition"
+                        className="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-4 py-2.5 rounded-lg transition font-bold shadow-lg shadow-blue-600/20"
                     >
                         <Plus className="w-4 h-4" />
                         Create Academy

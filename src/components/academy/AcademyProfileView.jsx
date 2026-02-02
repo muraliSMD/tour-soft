@@ -15,31 +15,35 @@ export default function AcademyProfileView({ academy }) {
                 )}
             </div>
             
-            <div className="p-6 relative">
-                {/* Logo */}
-                <div className="absolute -top-16 left-6 w-32 h-32 rounded-xl border-4 border-surface bg-gray-800 overflow-hidden">
-                    {academy.logo ? (
-                        <img src={academy.logo} alt="Logo" className="w-full h-full object-cover" />
-                    ) : (
-                        <div className="w-full h-full flex items-center justify-center text-4xl font-bold text-white/20">
-                            {academy.name?.charAt(0)}
-                        </div>
-                    )}
-                </div>
+            <div className="px-6 pb-6 relative">
+                {/* Logo & Header Info */}
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 -mt-12 sm:-mt-16 mb-6">
+                    {/* Logo Container */}
+                    <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-xl border-4 border-surface bg-surface-highlight overflow-hidden shadow-xl flex-shrink-0">
+                        {academy.logo ? (
+                            <img src={academy.logo} alt="Logo" className="w-full h-full object-cover" />
+                        ) : (
+                            <div className="w-full h-full flex items-center justify-center text-3xl sm:text-4xl font-bold text-white/20">
+                                {academy.name?.charAt(0)}
+                            </div>
+                        )}
+                    </div>
 
-                <div className="ml-40 pt-2">
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <h1 className="text-3xl font-bold text-white">{academy.name}</h1>
-                            <p className="text-text-muted mt-1 max-w-2xl">{academy.description || 'No description provided.'}</p>
+                    {/* Title and Actions */}
+                    <div className="flex-1 text-center sm:text-left pt-2 sm:pt-4 w-full">
+                        <div className="flex flex-col sm:flex-row justify-between items-center sm:items-start gap-4">
+                            <div className="min-w-0 flex-1">
+                                <h1 className="text-2xl sm:text-3xl font-bold text-white leading-tight drop-shadow-sm">{academy.name}</h1>
+                                <p className="text-text-muted mt-2 text-sm sm:text-base leading-relaxed max-w-2xl">{academy.description || 'No description provided.'}</p>
+                            </div>
+                            <Link 
+                                href={`/academies/${academy.slug || academy._id}`} 
+                                target="_blank"
+                                className="w-full sm:w-auto flex items-center justify-center gap-2 bg-primary/10 text-primary hover:bg-primary/20 px-5 py-2.5 rounded-xl transition font-bold border border-primary/20 shadow-lg shadow-primary/5"
+                            >
+                                <ExternalLink className="w-4 h-4" /> Public Page
+                            </Link>
                         </div>
-                        <Link 
-                            href={`/academies/${academy.slug || academy._id}`} 
-                            target="_blank"
-                            className="flex items-center gap-2 bg-primary/10 text-primary hover:bg-primary/20 px-4 py-2 rounded-lg transition"
-                        >
-                            <ExternalLink className="w-4 h-4" /> Public Page
-                        </Link>
                     </div>
                 </div>
 
